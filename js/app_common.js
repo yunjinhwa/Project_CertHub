@@ -58,11 +58,14 @@ window.showModal = function(title, content) {
     if (backdrop) document.body.removeChild(backdrop);
     if (modal) document.body.removeChild(modal);
     // 스크롤 복구
-    document.body.style.overflow = "";
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("--scrollbar-width");
   };
 
-  // 배경 스크롤 막기
-  document.body.style.overflow = "hidden";
+  // 배경 스크롤 막기 (스크롤바 공간 유지)
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  document.body.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+  document.body.classList.add("modal-open");
 
   const backdrop = createEl("div", { class: "modal-backdrop" });
   backdrop.addEventListener("click", closeModal);

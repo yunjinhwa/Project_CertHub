@@ -9,6 +9,11 @@ body {
   color: var(--fg);
 }
 
+body.modal-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0);
+}
+
 :root {
   --bg: #0b0c10;
   --panel: #0f1115;
