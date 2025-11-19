@@ -62,9 +62,9 @@ window.showModal = function(title, content) {
     document.body.style.removeProperty("--scrollbar-width");
   };
 
-  // 배경 스크롤 막기 (스크롤바 공간 유지)
+  // 스크롤바 너비 계산 및 배경 스크롤 막기
   const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.body.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+  document.body.style.setProperty("--scrollbar-width", scrollbarWidth + "px");
   document.body.classList.add("modal-open");
 
   const backdrop = createEl("div", { class: "modal-backdrop" });
@@ -282,6 +282,20 @@ window.renderTodo = function(containerId) {
   // todoManager가 있으면 사용, 없으면 DATA.todos 사용
   const todos = window.todoManager ? window.todoManager.todos : DATA.todos;
   
+  // 할 일이 없을 때
+  if (todos.length === 0) {
+    const emptyState = createEl("div", { 
+      class: "empty-state"
+    }, [
+      createEl("div", { class: "empty-state-content" }, [
+        createEl("div", { class: "empty-state-text" }, ["이번 주 할 일이 없습니다"]),
+        createEl("div", { class: "empty-state-subtext" }, ["관리 버튼을 눌러 할 일을 추가해보세요"])
+      ])
+    ]);
+    ul.appendChild(emptyState);
+    return;
+  }
+  
   // 상위 4개만 표시
   const displayTodos = todos.slice(0, 4);
   const hasMore = todos.length > 4;
@@ -323,7 +337,11 @@ function updateProgressUI(percentage) {
   }
   
   if (progressText) {
-    progressText.textContent = `${percentage}% (완료)`;
+    if (percentage === 100) {
+      progressText.textContent = `${percentage}% (완료)`;
+    } else {
+      progressText.textContent = `${percentage}%`;
+    }
   }
 }
 window.renderPaths = function(containerId) {

@@ -180,9 +180,9 @@ window.showEditProfileModal = function() {
     ])
   ]);
 
-  // 배경 스크롤 막기 (스크롤바 공간 유지)
+  // 스크롤바 너비 계산 및 배경 스크롤 막기
   const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.body.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+  document.body.style.setProperty("--scrollbar-width", scrollbarWidth + "px");
   document.body.classList.add("modal-open");
 
   const backdrop = createEl("div", { class: "modal-backdrop" });

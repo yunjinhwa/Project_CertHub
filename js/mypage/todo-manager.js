@@ -1,12 +1,7 @@
 // 할 일 관리 모듈
 window.todoManager = {
-  todos: [
-    { id: 1, text: "교재 1장 복습", completed: true },
-    { id: 2, text: "기출 10문제", completed: true },
-    { id: 3, text: "모의고사 1회", completed: false },
-    { id: 4, text: "오답노트 업데이트", completed: false }
-  ],
-  nextId: 5
+  todos: [],
+  nextId: 1
 };
 
 // 할 일 관리 모달 표시
@@ -62,15 +57,24 @@ window.showTodoManagerModal = function() {
   };
 
   const addTodo = () => {
-    const text = prompt("새로운 할 일을 입력하세요:");
-    if (text && text.trim()) {
-      currentTodos.push({
-        id: todoManager.nextId++,
-        text: text.trim(),
-        completed: false
-      });
-      renderTodoList();
-    }
+    // 임시 ID로 새 항목 생성
+    const tempId = "temp-" + Date.now();
+    currentTodos.push({
+      id: tempId,
+      text: "",
+      completed: false,
+      isNew: true
+    });
+    renderTodoList();
+    
+    // 렌더링 후 input에 포커스
+    setTimeout(() => {
+      const newItem = document.querySelector(`[data-todo-id="${tempId}"]`);
+      const input = newItem?.querySelector(".todo-text-input");
+      if (input) {
+        input.focus();
+      }
+    }, 0);
   };
 
   const toggleTodo = (id) => {
@@ -84,11 +88,36 @@ window.showTodoManagerModal = function() {
   const editTodo = (id) => {
     const todo = currentTodos.find(t => t.id === id);
     if (todo) {
-      const newText = prompt("할 일 수정:", todo.text);
-      if (newText && newText.trim()) {
-        todo.text = newText.trim();
+      const todoItem = document.querySelector(`[data-todo-id="${id}"]`);
+      const textEl = todoItem.querySelector(".todo-text");
+      
+      // input 요소로 변경
+      const input = createEl("input", {
+        type: "text",
+        class: "todo-text-input",
+        value: todo.text
+      });
+      
+      textEl.replaceWith(input);
+      input.focus();
+      input.select();
+      
+      const saveEdit = () => {
+        const newText = input.value.trim();
+        if (newText) {
+          todo.text = newText;
+        }
         renderTodoList();
-      }
+      };
+      
+      input.addEventListener("blur", saveEdit);
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          saveEdit();
+        } else if (e.key === "Escape") {
+          renderTodoList();
+        }
+      });
     }
   };
 
@@ -105,9 +134,15 @@ window.showTodoManagerModal = function() {
     todoListContainer.innerHTML = "";
     
     if (currentTodos.length === 0) {
-      todoListContainer.appendChild(
-        createEl("div", { class: "todo-empty" }, ["할 일이 없습니다. 추가해보세요!"])
-      );
+      const emptyState = createEl("div", { class: "todo-empty" }, [
+        createEl("div", { class: "todo-empty-text" }, ["할 일이 없습니다. 추가해보세요!"]),
+        createEl("button", {
+          class: "btn",
+          style: "margin-top: 16px;",
+          onClick: addTodo
+        }, ["+ 할 일 추가하기"])
+      ]);
+      todoListContainer.appendChild(emptyState);
       return;
     }
 
@@ -129,26 +164,67 @@ window.showTodoManagerModal = function() {
     sortedTodos.forEach(todo => {
       const todoItem = createEl("div", { 
         class: `todo-manager-item ${todo.completed ? "completed" : ""}`,
+        "data-todo-id": todo.id,
         onClick: () => {
-          if (!isEditMode) {
+          if (!isEditMode && !todo.isNew) {
             toggleTodo(todo.id);
           }
         }
       });
 
-      const checkbox = createEl("input", {
-        type: "checkbox",
-        class: "todo-checkbox",
-        checked: todo.completed
-      });
+      // 완료된 항목은 체크박스, 미완료는 빈 박스
+      const checkbox = todo.completed 
+        ? createEl("input", {
+            type: "checkbox",
+            class: "todo-checkbox",
+            checked: true
+          })
+        : createEl("div", {
+            class: "todo-checkbox-empty"
+          });
 
-      const textEl = createEl("span", { 
-        class: "todo-text"
-      }, [todo.text]);
+      // 새 항목이거나 편집 중이면 input으로 표시
+      let textEl;
+      if (todo.isNew) {
+        textEl = createEl("input", {
+          type: "text",
+          class: "todo-text-input",
+          value: todo.text,
+          placeholder: "할 일을 입력하세요"
+        });
+        
+        const saveNewTodo = () => {
+          const newText = textEl.value.trim();
+          if (newText) {
+            // 실제 ID로 변경
+            todo.id = todoManager.nextId++;
+            todo.text = newText;
+            delete todo.isNew;
+          } else {
+            // 공백이면 삭제
+            currentTodos = currentTodos.filter(t => t.id !== todo.id);
+          }
+          renderTodoList();
+        };
+        
+        textEl.addEventListener("blur", saveNewTodo);
+        textEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            saveNewTodo();
+          } else if (e.key === "Escape") {
+            currentTodos = currentTodos.filter(t => t.id !== todo.id);
+            renderTodoList();
+          }
+        });
+      } else {
+        textEl = createEl("span", { 
+          class: "todo-text"
+        }, [todo.text]);
+      }
 
       const actions = createEl("div", { class: "todo-actions" });
 
-      if (isEditMode) {
+      if (isEditMode && !todo.isNew) {
         const editBtnItem = createEl("button", {
           class: "btn-icon",
           type: "button",
@@ -167,7 +243,7 @@ window.showTodoManagerModal = function() {
         // 편집 모드일 때는 전체 클릭 이벤트 제거
         todoItem.onclick = null;
         todoItem.style.cursor = "default";
-      } else {
+      } else if (!todo.isNew) {
         // 일반 모드에서도 공간 유지를 위해 빈 요소 추가
         actions.style.minWidth = "64px";
       }
@@ -211,7 +287,7 @@ window.showTodoManagerModal = function() {
 
   const modalContent = createEl("div", { class: "todo-manager-container" }, [
     createEl("div", { class: "todo-manager-header" }, [
-      createEl("p", { class: "muted" }, ["체크박스를 클릭하여 완료 표시를 할 수 있습니다."]),
+      createEl("p", { class: "muted" }, ["할 일을 클릭하여 완료 표시를 할 수 있습니다."]),
       createEl("div", { class: "row", style: "gap: 8px; justify-content: flex-end;" }, [
         addBtn,
         sortBtn,
@@ -223,9 +299,9 @@ window.showTodoManagerModal = function() {
 
   renderTodoList();
 
-  // 배경 스크롤 막기 (스크롤바 공간 유지)
+  // 스크롤바 너비 계산 및 배경 스크롤 막기
   const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.body.style.setProperty("--scrollbar-width", `${scrollbarWidth}px`);
+  document.body.style.setProperty("--scrollbar-width", scrollbarWidth + "px");
   document.body.classList.add("modal-open");
 
   const backdrop = createEl("div", { class: "modal-backdrop" });
