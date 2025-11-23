@@ -57,23 +57,32 @@ window.showModal = function(title, content) {
     const modal = document.querySelector(".modal");
     if (backdrop) document.body.removeChild(backdrop);
     if (modal) document.body.removeChild(modal);
+    // 스크롤 복구
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("--scrollbar-width");
   };
+
+  // 스크롤바 너비 계산 및 배경 스크롤 막기
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  document.body.style.setProperty("--scrollbar-width", scrollbarWidth + "px");
+  document.body.classList.add("modal-open");
 
   const backdrop = createEl("div", { class: "modal-backdrop" });
   backdrop.addEventListener("click", closeModal);
 
+  const confirmBtn = createEl("button", {
+    class: "btn",
+    onClick: closeModal
+  }, ["확인"]);
+
   const modal = createEl("div", { class: "modal" }, [
     createEl("div", { class: "modal-header" }, [
-      createEl("h3", { class: "h3" }, [title]),
-      createEl("button", { 
-        class: "btn ghost", 
-        style: "padding: 4px 8px; font-size: 20px; line-height: 1;",
-        onClick: closeModal 
-      }, ["×"])
+      createEl("h3", { class: "h3" }, [title])
     ]),
     createEl("div", { class: "modal-body" }, [
       typeof content === "string" ? createEl("p", {}, [content]) : content
-    ])
+    ]),
+    createEl("div", { class: "modal-footer" }, [confirmBtn])
   ]);
 
   document.body.appendChild(backdrop);
@@ -158,8 +167,8 @@ window.renderCertList = function(containerId, title, items) {
         createEl("p", {}, [`사용자 평점: ${c.rate} / 5.0`]),
         createEl("p", { class: "mt-12" }, ["이곳에 해당 자격증의 시험 과목, 응시 자격, 합격률 등 더 자세한 정보가 표시될 예정입니다."]),
         createEl("div", { class: "mt-12 row", style: "gap: 8px;" }, [
-          createEl("button", { class: "btn", onClick: () => alert(`'${c.name}' 시험 접수 페이지로 이동합니다.`) }, ["시험 접수하기"]),
-          createEl("button", { class: "btn ghost", onClick: () => alert(`'${c.name}' 북마크에 추가되었습니다.`) }, ["북마크 추가"])
+          createEl("button", { class: "btn", onClick: () => showModal("알림", `'${c.name}' 시험 접수 페이지로 이동합니다.`) }, ["시험 접수하기"]),
+          createEl("button", { class: "btn ghost", onClick: () => showModal("알림", `'${c.name}' 북마크에 추가되었습니다.`) }, ["북마크 추가"])
         ])
       ]);
       showModal(`${c.name} 상세 정보`, detailContent);
@@ -267,8 +276,74 @@ window.renderCalendar = function(containerId) {
   onSearch(""); // 초기 목록 렌더링
 };
 window.renderTodo = function(containerId) {
-  const ul = $("#" + containerId); ul.innerHTML = ""; DATA.todos.forEach(t => ul.appendChild(createEl("li", {}, [t])));
+  const ul = $("#" + containerId); 
+  ul.innerHTML = "";
+  
+  // todoManager가 있으면 사용, 없으면 DATA.todos 사용
+  const todos = window.todoManager ? window.todoManager.todos : DATA.todos;
+  
+  // 할 일이 없을 때
+  if (todos.length === 0) {
+    const emptyState = createEl("div", { 
+      class: "empty-state"
+    }, [
+      createEl("div", { class: "empty-state-content" }, [
+        createEl("div", { class: "empty-state-text" }, ["이번 주 할 일이 없습니다"]),
+        createEl("div", { class: "empty-state-subtext" }, ["관리 버튼을 눌러 할 일을 추가해보세요"])
+      ])
+    ]);
+    ul.appendChild(emptyState);
+    return;
+  }
+  
+  // 상위 4개만 표시
+  const displayTodos = todos.slice(0, 4);
+  const hasMore = todos.length > 4;
+  
+  displayTodos.forEach(t => {
+    const text = typeof t === "string" ? t : (t.completed ? "✔ " : "□ ") + t.text;
+    ul.appendChild(createEl("li", {}, [text]));
+  });
+  
+  // 더 있으면 ... 표시
+  if (hasMore) {
+    ul.appendChild(createEl("li", { class: "muted", style: "font-style: italic;" }, [`... 외 ${todos.length - 4}개`]));
+  }
 };
+
+// 이번 주 할 일 진행률 업데이트
+window.updateWeekProgress = function() {
+  if (!window.todoManager) return;
+  
+  const todos = todoManager.todos;
+  if (todos.length === 0) {
+    updateProgressUI(0);
+    return;
+  }
+  
+  const completedCount = todos.filter(t => t.completed).length;
+  const percentage = Math.round((completedCount / todos.length) * 100);
+  
+  updateProgressUI(percentage);
+};
+
+function updateProgressUI(percentage) {
+  const progressBar = document.getElementById("weekProgressBar");
+  const progressText = document.getElementById("weekProgressText");
+  
+  if (progressBar) {
+    progressBar.style.width = percentage + "%";
+    progressBar.setAttribute("aria-label", `이번 주 할 일 진행률 ${percentage}%`);
+  }
+  
+  if (progressText) {
+    if (percentage === 100) {
+      progressText.textContent = `${percentage}% (완료)`;
+    } else {
+      progressText.textContent = `${percentage}%`;
+    }
+  }
+}
 window.renderPaths = function(containerId) {
   const ul = $("#" + containerId); ul.innerHTML = ""; DATA.paths.forEach(p => ul.appendChild(createEl("li", {}, [p])));
 };
