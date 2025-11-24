@@ -31,16 +31,18 @@
               </div>
             </div>
             <div class="row">
-              <button class="btn ghost" onclick="alert('프로필 편집')">프로필 편집</button>
-              <button class="btn" onclick="alert('학습 시작')">학습 시작</button>
+              <button class="btn" id="editProfileBtn">프로필 편집</button>
             </div>
           </div>
         </div>
 
         <div class="grid grid-3 gap-24">
           <div class="card p-24">
-            <h3 class="h3">이번 주 할 일</h3>
-            <ul class="todo mt-12" id="todo-week"></ul>
+            <div class="row-between mb-12">
+              <h3 class="h3">이번 주 할 일</h3>
+              <button class="btn ghost" id="manageTodoBtn" style="padding: 6px 12px; font-size: 14px;">관리</button>
+            </div>
+            <ul class="todo" id="todo-week"></ul>
           </div>
           <div class="card p-24">
             <h3 class="h3">추천 경로</h3>
@@ -48,10 +50,20 @@
           </div>
           <div class="card p-24">
             <h3 class="h3">나의 진행률</h3>
-            <div class="progress mt-12">
-              <div class="bar" style="width:66%" aria-label="이번 달 목표 달성 66%"></div>
+            <div class="mt-12">
+              <p class="caption muted mb-8">이번 달 목표 달성</p>
+              <div class="progress">
+                <div class="bar" style="width:66%" aria-label="이번 달 목표 달성 66%"></div>
+              </div>
+              <p class="caption muted mt-8">66%</p>
             </div>
-            <p class="caption muted mt-8">이번 달 목표 달성 66%</p>
+            <div class="mt-12">
+              <p class="caption muted mb-8">이번 주 할 일</p>
+              <div class="progress">
+                <div class="bar" id="weekProgressBar" style="width:0%" aria-label="이번 주 할 일 진행률"></div>
+              </div>
+              <p class="caption muted mt-8" id="weekProgressText">0%</p>
+            </div>
           </div>
         </div>
 
@@ -71,6 +83,8 @@
   </footer>
 
   <script src="js/app_common.js"></script>
-  <script src="js/mypage.js"></script>
+  <script src="js/mypage/profile-edit.js"></script>
+  <script src="js/mypage/todo-manager.js"></script>
+  <script src="js/mypage/mypage.js"></script>
 </body>
 </html>

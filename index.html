@@ -1,87 +1,123 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CertHub — 홈</title>
-  <link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자격증 검색</title>
+    <link rel="stylesheet" href="css/style_01.css">
 </head>
-<body class="light">
-  <header class="site-header container">
-    <div class="brand">
-      <span class="brand-pin" aria-hidden="true">📍</span>
-      <span class="brand-name">CertHub</span>
-    </div>
-    <nav class="nav-actions">
-      <a class="btn ghost" href="mypage.html">마이페이지</a>
-      <button class="btn ghost" id="toggleTheme">🌓 Dark mode</button>
-    </nav>
-  </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1>무엇을 준비하시나요?</h1>
-      <p class="muted">자격증 검색, 일정, 커뮤니티를 한 곳에서.</p>
-    </section>
+<body class="light"> <!-- 기본값이 라이트 모드 -->
+    <!-- =================================== header =================================== -->
+    <header class="site-header container">
+        <div class="brand">
+            <span class="brand-pin" aria-hidden="true">📍</span>
+            <span class="brand-name">CertHub</span>
+        </div>
 
+        <!-- =================================== nav  =================================== -->
+        <nav class="nav-actions">
+            <a class="btn ghost" href="mypage.html">마이페이지</a>
+            <button class="btn ghost" id="toggleTheme">🌓 Dark mode</button>
+        </nav>
+    </header>
+
+    <!-- =================================== section  =================================== -->
     <section>
-      <div class="grid grid-3 gap-24">
-        <div class="col-span-2">
-          <div class="card p-24">
-            <div id="searchbar-1" class="mb-12"></div>
-            <div id="trend-tags" class="tags"></div>
-          </div>
-        </div>
-        <div id="calendar-1"></div>
-      </div>
+        <main class="container">
+            <!----------------- (1) 🔍 자격증 검색 ----------------->
+            <section class="hero">
+                <h1>무엇을 준비하시나요?</h1>
+                <p class="muted">자격증 검색, 일정, 커뮤니티를 한 곳에서.</p>
+            </section>
+            <!-- 검색 영역과 시험 일정 영역 -->
+            <div class="search-calendar-wrapper">
+                <!-- 검색 영역 -->           
+                <div class="search-div">
+                    <!-- 검색 영역의 검색창 부분 -->
+                    <div class="search-box search-top">
+                        <div class="search-input-wrap">
+                            <span class="search-input-icon">🔍</span>
+                            <input id="searchInput" class="search-input" type="text"
+                                placeholder="자격증을 검색해보세요 (예: 정보처리기사)" />
+                        </div>
+                        <button id="searchButton" class="search-btn">검색</button>
+                    </div>
+                    <!-- 검색 영역 검색 결과 부분 -->
+                    <div id="scrollContainer" class="search-bottom">
+                        <div id="results"></div>
+                    </div>
+                </div>
 
-      <section class="mt-24" id="cert-detail-section">
-        <h2 class="h2 mb-2">📘 자격증 상세 정보</h2>
-        <div class="grid grid-4 gap-24">
-          <div class="card p-24">
-            <h3 class="h3">국가 자격</h3>
-            <p class="body-2 muted mt-8">국가가 법령에 따라 시행하는 시험 등을 통해 개인이 직무 수행에 필요한 능력을 갖추었음을 인증하는 자격</p>
-            <a href="Certification type/01.html" class="link">국가 자격 보러가기</a> <!-- 국가 자격 링크 -->
-          </div>
-          <div class="card p-24">
-            <h3 class="h3">민간 자격</h3>
-            <p class="body-2 muted mt-8">국가 자격 외에 민간 기업이나 단체가 일정한 기준에 따라 개인의 능력을 인증하는 자격</p>
-            <a href="#" class="link">민간 자격 보러가기</a>
-          </div>
-          <div class="card p-24">
-            <h3 class="h3">등록 자격</h3>
-            <p class="body-2 muted mt-8">자격기본법에 따라 민간 자격을 발급하는 기관이 국가에 해당 자격을 등록한 자격</p>
-            <a href="#" class="link">등록 자격 보러가기</a>
-          </div>
-          <div class="card p-24">
-            <h3 class="h3">공인 자격</h3>
-            <p class="body-2 muted mt-8">자격기본법에 따라 민간 자격 중에서 특히 신뢰성과 공공성을 확보한 자격으로, 국가가 공인한 자격</p>
-            <a href="#" class="link">공인 자격 보러가기</a>
-          </div>
-        </div>
-      </section>
-      <section id="cert-category-results" class="mt-24">
-        <!-- API로 불러온 자격증 목록이 여기에 표시됩니다. -->
-      </section>
+                <!----------------- (2) 📅 시험일정 -------------------------------->
+                <div id="calendar-section" class="data-section">
+                    <h2 class="h2">📅 시험 일정</h2>
+                    <div id="calendar-1"></div>
+                </div>
+            </div>
 
-      <div class="grid grid-3 gap-24 mt-24">
-        <div class="col-span-2 stack gap-24">
-          <div id="certlist-trending"></div>
-          <div id="community-latest-1"></div>
-        </div>
-        <div class="card p-24">
-          <h3 class="h3">활용 분야 둘러보기</h3>
-          <div class="chip-grid mt-12" id="fields-browse"></div>
-        </div>
-      </div>
+
+            <!----------------- (3) 📘 자격증 상세 정보 → 클릭하면 상세보기 데이터 들어가는 영역 ----------------->
+            <div id="cert-detail-section" class="data-section">
+                <h2 class="h2">📘 자격증 상세 정보</h2>
+                <div class="cert-type">
+                    <div class="card p-24">
+                        <h3 class="h3">국가 자격</h3>
+                        <p class="body-2 muted mt-8">국가가 법령에 따라 시행하는 시험 등을 통해 개인이 직무 수행에 필요한 능력을 갖추었음을 인증하는 자격</p>
+                        <a href="Certification_type/01.html" class="link">국가 자격 보러가기</a>
+                    </div>
+                    <div class="card p-24">
+                        <h3 class="h3">민간 자격</h3>
+                        <p class="body-2 muted mt-8">국가 자격 외에 민간 기업이나 단체가 일정한 기준에 따라 개인의 능력을 인증하는 자격</p>
+                        <a href="Certification_type/02.html" class="link">민간 자격 보러가기</a>
+                    </div>
+                    <div class="card p-24">
+                        <h3 class="h3">등록 자격</h3>
+                        <p class="body-2 muted mt-8">자격기본법에 따라 민간 자격을 발급하는 기관이 국가에 해당 자격을 등록한 자격</p>
+                        <a href="Certification_type/03.html" class="link">등록 자격 보러가기</a>
+                    </div>
+                    <div class="card p-24">
+                        <h3 class="h3">공인 자격</h3>
+                        <p class="body-2 muted mt-8">자격기본법에 따라 민간 자격 중에서 특히 신뢰성과 공공성을 확보한 자격으로, 국가가 공인한 자격</p>
+                        <a href="Certification_type/03.html" class="link">공인 자격 보러가기</a>
+                    </div>
+                </div>
+            </div>
+
+            <!----------------- (4) 📈 지금 뜨는 자격증 ----------------->
+            <div id="trending-certs-section" class="data-section">
+                <h2 class="h2">📈 지금 뜨는 자격증</h2>
+                <div id="certlist-trending">
+                    <!-- 🔹 DATA.certsTrending 데이터 삽입 -->
+                </div>
+            </div>
+
+            <!----------------- (5) 🗣 최신 커뮤니티(추후 개발 예정) ----------------->
+            <div id="community-section" class="data-section">
+                <h2 class="h2">🗣 최신 커뮤니티 글</h2>
+                <div id="community-latest-1">
+                    <!-- 🔹 최신 글 / 게시물 리스트 삽입 -->
+                </div>
+            </div>
+
+            <!----------------- (6) 🧭 활용 분야 ----------------->
+            <div id="fields-section" class="data-section">
+                <h2 class="h2">🧭 활용 분야 둘러보기</h2>
+                <div id="fields-browse">
+                    <!-- 🔹 분야 데이터 삽입 -->
+                </div>
+            </div>
+
+            <script type="module" src="js/main.js"></script>
+            <script src="js/theme.js"></script>
+        </main>
     </section>
-  </main>
 
-  <footer class="site-footer container">
-    <p class="caption muted">© CertHub</p>
-  </footer>
-
-  <script src="js/app_common.js"></script>
-  <script src="js/home.js"></script>
+    <!-- =================================== footer =================================== -->
+    <footer class="site-footer container">
+        <p class="caption muted">© CertHub</p>
+    </footer>
 </body>
+
 </html>

@@ -1,0 +1,324 @@
+/* 웹 페이지 전체 부분 */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Apple SD Gothic Neo, sans-serif;
+    line-height: 1.5;
+    background: var(--bg);
+    color: var(--fg);
+}
+
+:root {
+    --bg: #0b0c10;
+    --panel: #0f1115;
+    --card: #13151b;
+    --overlay: #1a1f2d;
+    --fg: #f5f7fb;
+    --muted: #a0a8b8;
+    --primary: #5b8cff;
+    --primary-600: #386cff;
+    --border: #252a36;
+    --ring: #7aa2ff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    --radius: 16px;
+}
+
+/* ==================================================================================================================*/
+
+/* Light theme */
+.light {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --card: #ffffff;
+    --overlay: #eef1f8;
+    --fg: #0d1222;
+    --muted: #58627a;
+    --primary: #3757ff;
+    --primary-600: #2747f2;
+    --border: #e6e9f2;
+    --ring: #8ca6ff;
+}
+
+/* 마이페이지, 다크모드 전환 버튼 */
+.btn {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--primary);
+    color: #fff;
+    box-shadow: var(--shadow);
+}
+
+.btn:hover {
+    background: var(--primary-600);
+}
+
+.btn.ghost {
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    box-shadow: none;
+    text-decoration: none;
+}
+
+.btn.ghost:hover {
+    border-color: var(--ring);
+}
+
+/* ==================================================================================================================*/
+
+/* main 영역 (전체) */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* 무엇을 준비하시나요? */
+h1 {
+    font-size: 28px;
+    margin: 0 0 4px;
+}
+
+/* 자격증 검색, 일정, 커뮤니티를 한 곳에서. */
+.muted {
+    color: var(--muted);
+}
+
+/* header 와 footer */
+.site-header,
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 16px;
+    padding-bottom: 48px;
+}
+
+/* brand */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.brand-pin {
+    font-size: 18px;
+}
+
+.brand-name {
+    font-size: 18px;
+}
+
+/* ======================================
+   1. 자격증 검색
+====================================== */
+.search-div {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: transparent !important;
+    padding: 0;
+    box-shadow: none;
+}
+
+.search-input-wrap {
+    flex: 1;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    height: 52px;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding-left: 48px;
+    padding-right: 16px;
+    font-size: 16px;
+    color: #111;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.search-input::placeholder {
+    color: #b4b9c1;
+}
+
+.search-input:focus {
+    background: #ffffff;
+    border-color: #4f7cff;
+    box-shadow: 0 0 0 3px rgba(79,124,255,0.22);
+}
+
+.search-input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #9aa0b2;
+}
+
+.search-btn {
+    width: 90px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    transition: 0.2s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 6px 18px rgba(37,99,235,0.45);
+}
+
+/* ======================================
+   자격증 검색 - 스크롤 영역
+====================================== */
+#scrollContainer {
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 검색 결과 카드들 */
+#results .item {
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+#results .item:hover {
+    background: #f3f4f6;
+}
+
+/* =================================
+   자격증 검색 - 결과 카드 스타일 영역
+==================================== */
+.list-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 16px 20px !important;
+    border-radius: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.2s ease;
+}
+
+.list-item:hover {
+    background: var(--overlay);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.list-item hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+}
+
+/* 검색 + 시험 일정 2컬럼 레이아웃  */
+.search-calendar-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 왼쪽 2, 오른쪽 1 */
+    gap: 32px;
+    margin-top: 32px;
+    align-items: flex-start;
+}
+
+.search-div {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+#calender-section {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+/* ======================================
+   3. 자격증 상세 정보 영역
+====================================== */
+/*자격증 상세정보 카드를 가로 배치*/
+.cert-type {
+    display: flex;
+    gap: 24px;
+}
+
+.cert-type .card {
+    flex: 1;
+}
+
+#cert-detail-section .card {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#cert-detail-section .card:hover {
+  transform: translateY(-5px) scale(1.03); /* 위로 이동하며 약간 커지는 효과 */
+  background-color: var(--overlay); /* 배경색 변경 */
+}
+
+/* ============ Cards & Surfaces ============ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.p-24 { padding: 24px; }
+
+h2 { padding: 10px 0; }
+.h3 { font-size: 18px; margin: 0; }
+
+a {
+  color: #315ae1;
+  padding: 2px;
+  margin: 2px;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #f7f1e9;
+  background-color: #282626;
+  border-radius: 10px;
+}
+

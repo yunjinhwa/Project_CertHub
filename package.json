@@ -1,0 +1,27 @@
+{
+  "name": "project_certhub",
+  "version": "1.0.0",
+  "description": "해당 프로젝트는 자격증 관련 정보 모음 웹페이지이다.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Team-CertHub/Project_CertHub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Team-CertHub/Project_CertHub/issues"
+  },
+  "homepage": "https://github.com/Team-CertHub/Project_CertHub#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}
