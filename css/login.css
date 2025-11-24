@@ -153,6 +153,40 @@
   justify-content: center;
   padding: 60px;
   background: var(--panel);
+  position: relative;
+}
+
+.btn-back {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.btn-back:hover {
+  background: var(--hover);
+  color: var(--text-primary);
+}
+
+.btn-back svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-back:hover svg {
+  transform: translateX(3px);
 }
 
 .login-form-wrapper {
@@ -371,16 +405,17 @@
   font-size: 16px;
   font-weight: 600;
   color: white;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-600) 100%);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(91, 140, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: 0.2s ease;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(91, 140, 255, 0.4);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
 }
 
 .btn-primary:active {
@@ -450,9 +485,16 @@
 }
 
 .btn-kakao {
-  background: #fee500;
-  border-color: #fee500;
-  color: #000000;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: 0.2s ease;
+}
+
+.btn-kakao:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
 }
 
 .btn-kakao .social-icon svg {

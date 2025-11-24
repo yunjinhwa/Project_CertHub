@@ -1,5 +1,206 @@
 /* ============ Mypage Specific Styles ============ */
 
+/* ==================== 관심 자격증 D-day ==================== */
+.cert-dday-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.cert-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0;
+  line-height: 1.3;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.cert-exam-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.cert-exam-date svg {
+  color: var(--muted);
+}
+
+.cert-dday-display {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--primary);
+  text-align: center;
+  align-self: center;
+  min-width: 140px;
+}
+
+.cert-dday-display.urgent {
+  color: #ef4444;
+  animation: pulse-urgent 2s ease-in-out infinite;
+}
+
+.cert-dday-display.warning {
+  color: #f59e0b;
+}
+
+.cert-dday-display.normal {
+  color: var(--primary);
+}
+
+@keyframes pulse-urgent {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.btn-cert-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: 0.2s ease;
+  width: 100%;
+}
+
+.btn-cert-detail:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+.cert-dday-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  min-height: 180px;
+}
+
+.cert-empty-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.btn-cert-select {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: 0.2s ease;
+}
+
+.btn-cert-select:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+/* ==================== 나의 진행률 ==================== */
+.progress-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.progress-percentage {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.progress-bar-container {
+  width: 100%;
+}
+
+.progress-bar-bg {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  background: var(--overlay);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-600) 100%);
+  border-radius: 14px;
+  transition: width 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 2;
+}
+
+.progress-bar-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: radial-gradient(ellipse at center, 
+    rgba(91, 140, 255, 0.6) 0%, 
+    rgba(91, 140, 255, 0.3) 50%,
+    transparent 100%);
+  border-radius: 14px;
+  filter: blur(12px);
+  transition: width 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 1;
+}
+
+.progress-status {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  margin: 4px 0 0 0;
+  font-weight: 500;
+  min-height: 20px;
+}
+
 /* 모달 열릴 때 스크롤 방지 (스크롤바는 유지) */
 body.modal-open {
   overflow: hidden;
