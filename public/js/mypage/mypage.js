@@ -2,16 +2,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   setupThemeToggle();
   renderTodo("todo-week");
-  renderPaths("paths-reco");
+  renderCertDday(); // 관심 자격증 D-day
+  renderWeekProgress(); // 이번 주 할 일 진행률
   renderCertList("certlist-reco", "관심 기반 추천", DATA.certsReco);
   // mypage.js — replace the community render line
   const interestKeywords = (DATA.userKeywords || []).length ? DATA.userKeywords : ["it", "데이터", "회계"];
   renderCommunityByKeywords("community-latest-2", interestKeywords, "관심 키워드 커뮤니티");
   renderCalendar("calendar-2");
   renderBookmarks("bookmark-2");
-  
-  // 이번 주 할 일 진행률 초기화
-  updateWeekProgress();
   
   // 프로필 편집 버튼 이벤트 리스너
   const editProfileBtn = document.getElementById("editProfileBtn");
