@@ -296,19 +296,35 @@ window.renderTodo = function(containerId) {
     return;
   }
   
-  // 상위 4개만 표시
-  const displayTodos = todos.slice(0, 4);
-  const hasMore = todos.length > 4;
-  
-  displayTodos.forEach(t => {
-    const text = typeof t === "string" ? t : (t.completed ? "✔ " : "□ ") + t.text;
-    ul.appendChild(createEl("li", {}, [text]));
+  // 모든 할일 표시 (스크롤 가능하도록)
+  todos.forEach((t, index) => {
+    const todo = typeof t === "string" ? { text: t, completed: false } : t;
+    const checkbox = todo.completed 
+      ? createEl("span", { class: "todo-checkbox-icon" }, ["✔️"])
+      : createEl("span", { class: "todo-checkbox-icon empty" }, ["□"]);
+    
+    const todoItem = createEl("li", {
+      class: todo.completed ? "completed" : "",
+      style: "cursor: pointer; display: flex; align-items: center; gap: 8px;",
+      onClick: () => {
+        if (window.todoManager) {
+          const todoObj = window.todoManager.todos[index];
+          if (todoObj) {
+            todoObj.completed = !todoObj.completed;
+            renderTodo(containerId);
+            updateWeekProgress();
+          }
+        }
+      }
+    }, [
+      checkbox,
+      createEl("span", { 
+        style: todo.completed ? "text-decoration: line-through; opacity: 0.6;" : "" 
+      }, [todo.text])
+    ]);
+    
+    ul.appendChild(todoItem);
   });
-  
-  // 더 있으면 ... 표시
-  if (hasMore) {
-    ul.appendChild(createEl("li", { class: "muted", style: "font-style: italic;" }, [`... 외 ${todos.length - 4}개`]));
-  }
 };
 
 // 이번 주 할 일 진행률 업데이트

@@ -17,6 +17,22 @@ document.addEventListener("DOMContentLoaded", () => {
     editProfileBtn.addEventListener("click", showEditProfileModal);
   }
 
+  // 로그아웃 버튼 이벤트 리스너
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      if (confirm("로그아웃 하시겠습니까?")) {
+        // 로그인 상태 제거
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('loginTimestamp');
+        
+        // 로그인 페이지로 이동
+        window.location.href = 'login.html';
+      }
+    });
+  }
+
   // 할 일 관리 버튼 이벤트 리스너
   const manageTodoBtn = document.getElementById("manageTodoBtn");
   if (manageTodoBtn) {
