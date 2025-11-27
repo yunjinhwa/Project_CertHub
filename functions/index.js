@@ -5,17 +5,14 @@ const cors = require("cors");
 const fetch = require("node-fetch"); // node-fetch@2
 
 const app = express();
-
-// CORS 허용 (브라우저에서 호출할 거라서)
 app.use(cors());
 
-// 자격증 조회 프록시 API
+// =============================================== 자격증 목록 ===============================================
 app.get("/api/cert", async (req, res) => {
   const certName = req.query.name || "";
   const serviceKey =
     "d969c53a49d2b0f858f6a0298c6c52f20a398a12a952185694f67b019f0aa72e";
 
-  // Q-Net 공공데이터 API 원본 URL
   const baseUrl =
     "http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList";
 
@@ -29,8 +26,6 @@ app.get("/api/cert", async (req, res) => {
   try {
     const response = await fetch(url);
     const xmlText = await response.text();
-
-    // 브라우저에 XML 그대로 전달
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
@@ -39,5 +34,33 @@ app.get("/api/cert", async (req, res) => {
   }
 });
 
-// ✅ 이 한 줄이 app.listen 대신 하는 역할
+// =============================================== 자격 상세 조회 ===============================================
+app.get("/api/cert/detail", async (req, res) => {
+  const jmCd = req.query.jmcd;
+  if (!jmCd) return res.status(400).send("jmcd parameter is required.");
+
+  const serviceKey =
+    "d969c53a49d2b0f858f6a0298c6c52f20a398a12a952185694f67b019f0aa72e";
+
+  const baseUrl =
+    "http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList";
+
+  const query =
+    `?serviceKey=${serviceKey}` +
+    `&jmCd=${encodeURIComponent(jmCd)}`;
+
+  const url = baseUrl + query;
+
+  try {
+    const response = await fetch(url);
+    const xmlText = await response.text();
+    res.set("Content-Type", "application/xml; charset=utf-8");
+    res.send(xmlText);
+  } catch (error) {
+    console.error("상세조회 오류:", error);
+    res.status(500).send("서버 오류: " + error.message);
+  }
+});
+
+// =============================================== Firebase Functions로 Express 배포 ===============================================
 exports.api = functions.https.onRequest(app);

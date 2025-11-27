@@ -9,7 +9,7 @@ const PORT = 3000;
 // CORS 허용 (브라우저에서 호출할 거라서)
 app.use(cors());
 
-// 자격증 조회 프록시 API
+// =============================================== 자격증 목록 ===============================================
 app.get('/api/cert', async (req, res) => {
   const certName = req.query.name || '';
   const serviceKey = 'd969c53a49d2b0f858f6a0298c6c52f20a398a12a952185694f67b019f0aa72e';
@@ -44,3 +44,33 @@ app.get('/api/cert', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
 });
+
+// =============================================== 자격 정보 상세 조회 (종목코드 기반) ===============================================
+// 상세 조회 API
+app.get('/api/cert/detail', async (req, res) => {
+  const jmCd = req.query.jmcd;
+  if (!jmCd) return res.status(400).send("jmcd parameter is required.");
+
+  const serviceKey = 'd969c53a49d2b0f858f6a0298c6c52f20a398a12a952185694f67b019f0aa72e';
+
+  const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList';
+
+  const query =
+    `?serviceKey=${serviceKey}` +
+    `&jmCd=${encodeURIComponent(jmCd)}`;
+
+  const url = baseUrl + query;
+
+  try {
+    const response = await fetch(url);
+    const xmlText = await response.text();
+
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.send(xmlText);
+  } catch (error) {
+    console.error("상세조회 오류:", error);
+    res.status(500).send("서버 오류: " + error.message);
+  }
+});
+
+

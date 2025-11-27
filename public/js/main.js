@@ -4,6 +4,7 @@ import { fetchCertificates, getItemsFromXML } from "./api.js";
 import { handleAutocomplete } from "./autocomplete.js";
 import { searchCertificate } from "./search.js";
 import { setAllItems,  loadMoreItems, handleDivScroll, } from "./pagination.js";
+import { loadDetailInfo } from "./detail.js";
 
 document.addEventListener("DOMContentLoaded", initPage);
 
@@ -39,4 +40,14 @@ async function initPage() {
         .getElementById("scrollContainer")
         .addEventListener("scroll", handleDivScroll);
 }
+
+// 자격 정보 출력
+import { closeModal } from "./detail.js";
+
+document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+
+// 바깥 클릭 시 닫기
+document.getElementById("detailModal").addEventListener("click", (e) => {
+    if (e.target.id === "detailModal") closeModal();
+});
 

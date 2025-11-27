@@ -5,6 +5,7 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+
   "functions": [
     {
       "source": "functions",
@@ -19,17 +20,18 @@
       ]
     }
   ],
+
   "hosting": {
     "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "cleanUrls": true,
     "rewrites": [
       {
-        "source": "/api/cert",
+        "source": "/api/**",
         "function": "api"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   }
