@@ -1,5 +1,12 @@
 // Login Page JavaScript
 
+import { auth } from "../firebase-config.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
@@ -96,27 +103,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Show loading state
-    const submitBtn = loginForm.querySelector('.btn-primary');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = '로그인 중...';
-    submitBtn.disabled = true;
-
     try {
+      // Show loading state
+      const submitBtn = loginForm.querySelector('.btn-primary');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = '로그인 중...';
+      submitBtn.disabled = true;
       // TODO: Replace with actual API call
-      await mockLogin(email, password, rememberMe);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
       
-      showNotification('로그인 성공! 페이지를 이동합니다.', 'success');
-      
-      // Redirect to main page after successful login
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
+      console.log("로그인 성공: " + cred.user.uid);
+      alert("로그인 성공");
 
+      window.location.href = '/index.html';
     } catch (error) {
-      showNotification(error.message || '로그인에 실패했습니다. 다시 시도해주세요.', 'error');
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
+      console.log(error);
+      alert("로그인 실패: " + error.message);
     }
   });
 
