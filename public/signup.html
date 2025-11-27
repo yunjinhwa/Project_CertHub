@@ -6,6 +6,7 @@
   <title>CertHub — 회원가입</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/signup.css" />
+  <link rel="stylesheet" href="css/terms-modal.css" />
 </head>
 <body class="light">
   <script>
@@ -15,11 +16,12 @@
   </script>
 
   <main class="signup-page">
-    <div class="signup-content">
-      <div class="signup-header-section">
-        <h1>회원가입</h1>
-        <p class="muted">CertHub에 가입하고 자격증 취득의 첫 걸음을 시작하세요</p>
-      </div>
+    <div class="container">
+      <div class="signup-content">
+        <div class="signup-header-section">
+          <h1>환영합니다!</h1>
+          <p class="signup-subtitle">CertHub에서 자격증 취득의 여정을 시작하세요</p>
+        </div>
 
       <form class="signup-form" id="signupForm" novalidate>
           <!-- 프로필 이미지 -->
@@ -30,8 +32,8 @@
                 <span class="avatar-placeholder">👤</span>
               </div>
               <div class="profile-upload-actions">
-                <button type="button" class="btn-upload" id="selectImageBtn">이미지 선택</button>
                 <button type="button" class="btn-upload-reset" id="resetImageBtn">기본으로 설정</button>
+                <button type="button" class="btn-upload" id="selectImageBtn">이미지 선택</button>
                 <input type="file" id="profileImageInput" accept="image/*" style="display: none;" />
               </div>
             </div>
@@ -40,7 +42,9 @@
 
           <!-- 이름(닉네임) -->
           <div class="form-group">
-            <label for="nickname" class="form-label">이름(닉네임)</label>
+            <label for="nickname" class="form-label">
+              이름(닉네임) <span class="required">*</span>
+            </label>
             <div class="input-wrapper">
               <input 
                 type="text" 
@@ -109,8 +113,8 @@
               </span>
               <button type="button" class="btn-toggle-password" id="togglePassword">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-eye">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </button>
             </div>
@@ -140,28 +144,47 @@
               </span>
               <button type="button" class="btn-toggle-password" id="togglePasswordConfirm">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-eye">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </button>
             </div>
             <span class="error-message" id="passwordConfirmError"></span>
           </div>
 
-          <button type="submit" class="btn-primary">회원가입</button>
-
           <!-- 이용약관 동의 -->
-          <div class="terms-agreement">
-            <label class="checkbox-label">
-              <input type="checkbox" id="termsAgree" />
-              <span>[필수] 서비스 약관 동의</span>
-            </label>
-            <button type="button" class="btn-terms-detail" id="viewTermsBtn">전문보기</button>
+          <div class="terms-section">
+            <h3 class="terms-section-title">약관 동의</h3>
+            
+            <div class="terms-agreement">
+              <label class="checkbox-label">
+                <input type="checkbox" id="termsAgree" />
+                <span>[필수] 서비스 이용약관 동의</span>
+              </label>
+              <button type="button" class="btn-terms-detail" id="viewTermsBtn">전문보기</button>
+            </div>
+
+            <div class="terms-agreement">
+              <label class="checkbox-label">
+                <input type="checkbox" id="privacyAgree" />
+                <span>[필수] 개인정보 처리방침 동의</span>
+              </label>
+              <button type="button" class="btn-terms-detail" id="viewPrivacyBtn">전문보기</button>
+            </div>
+
+            <div class="terms-agreement">
+              <label class="checkbox-label">
+                <input type="checkbox" id="ageAgree" />
+                <span>[필수] 만 14세 이상입니다</span>
+              </label>
+            </div>
           </div>
+
+          <button type="submit" class="btn-primary">회원가입</button>
 
           <div class="signup-footer-text">
             <span>이미 계정이 있으신가요?</span>
-            <a href="login.html" class="link-primary">로그인</a>
+            <a href="login.html" class="link-primary">로그인하기</a>
           </div>
         </form>
       </div>
@@ -169,6 +192,7 @@
   </main>
 
   <script src="js/app_common.js"></script>
+  <script src="js/signup/terms-modal.js"></script>
   <script src="js/signup/signup.js"></script>
 </body>
 </html>

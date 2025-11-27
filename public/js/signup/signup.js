@@ -17,7 +17,10 @@
   
   // 약관 동의 관련
   const termsAgreeCheckbox = document.getElementById('termsAgree');
+  const privacyAgreeCheckbox = document.getElementById('privacyAgree');
+  const ageAgreeCheckbox = document.getElementById('ageAgree');
   const viewTermsBtn = document.getElementById('viewTermsBtn');
+  const viewPrivacyBtn = document.getElementById('viewPrivacyBtn');
   
   // 프로필 이미지 관련
   const profilePreview = document.getElementById('profilePreview');
@@ -28,36 +31,53 @@
   let isEmailChecked = false;
   let selectedProfileImage = null;
   
-  // 비밀번호 표시/숨기기 토글
+  // 비밀번호 표시/숨기기 토글 - 누르고 있을 때만 보임
   function setupPasswordToggle(toggleBtn, inputField) {
     if (!toggleBtn || !inputField) return;
     
-    toggleBtn.addEventListener('click', function() {
-      const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
-      inputField.setAttribute('type', type);
+    // mousedown: 누르는 순간 보이기
+    toggleBtn.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      inputField.setAttribute('type', 'text');
       
       const iconEye = toggleBtn.querySelector('.icon-eye');
-      if (type === 'text') {
-        iconEye.innerHTML = `
-          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        `;
-      } else {
-        iconEye.innerHTML = `
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        `;
-      }
+      iconEye.innerHTML = `
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
     });
+    
+    // mouseup/mouseleave: 떼는 순간 숨기기
+    function hidePassword() {
+      inputField.setAttribute('type', 'password');
+      
+      const iconEye = toggleBtn.querySelector('.icon-eye');
+      iconEye.innerHTML = `
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+    }
+    
+    toggleBtn.addEventListener('mouseup', hidePassword);
+    toggleBtn.addEventListener('mouseleave', hidePassword);
+    
+    // 터치 이벤트도 처리 (모바일)
+    toggleBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      inputField.setAttribute('type', 'text');
+      
+      const iconEye = toggleBtn.querySelector('.icon-eye');
+      iconEye.innerHTML = `
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+    });
+    
+    toggleBtn.addEventListener('touchend', hidePassword);
   }
   
   setupPasswordToggle(togglePassword, passwordInput);
   setupPasswordToggle(togglePasswordConfirm, passwordConfirmInput);
-  
-  // 약관 전문 보기 버튼
-  viewTermsBtn.addEventListener('click', function() {
-    alert('서비스 약관\n\n제1조 (목적)\n본 약관은 CertHub 서비스 이용과 관련하여 회사와 이용자의 권리, 의무 및 책임사항을 규정하는 것을 목적으로 합니다.\n\n제2조 (정의)\n1. "서비스"란 자격증 정보 제공 및 관리 서비스를 말합니다.\n2. "이용자"란 본 약관에 따라 서비스를 이용하는 회원을 말합니다.\n\n제3조 (약관의 효력 및 변경)\n본 약관은 서비스를 이용하고자 하는 모든 이용자에게 그 효력이 발생합니다.\n\n제4조 (개인정보 보호)\n회사는 이용자의 개인정보를 보호하기 위해 최선을 다하며, 개인정보 처리방침에 따라 관리합니다.');
-  });
   
   // 프로필 이미지 선택
   selectImageBtn.addEventListener('click', function() {
@@ -155,7 +175,7 @@
         showSuccess(emailInput, emailError);
         checkEmailBtn.classList.add('verified');
         checkEmailBtn.textContent = '확인완료';
-        emailInput.disabled = true;
+        // 이메일 입력창은 disabled 하지 않음 (재입력 가능)
       } else {
         isEmailChecked = false;
         showError(emailInput, emailError, '이미 사용 중인 이메일입니다.');
@@ -170,7 +190,6 @@
   emailInput.addEventListener('input', function() {
     if (isEmailChecked) {
       isEmailChecked = false;
-      emailInput.disabled = false;
       checkEmailBtn.classList.remove('verified');
       checkEmailBtn.textContent = '중복확인';
       checkEmailBtn.disabled = false;
@@ -207,6 +226,15 @@
     e.preventDefault();
     
     let isValid = true;
+    
+    // 닉네임 검증
+    const nickname = nicknameInput.value.trim();
+    if (!nickname) {
+      showError(nicknameInput, nicknameError, '닉네임을 입력해주세요.');
+      isValid = false;
+    } else {
+      clearError(nicknameInput, nicknameError);
+    }
     
     // 이메일 검증
     const email = emailInput.value.trim();
@@ -248,9 +276,22 @@
     }
     
     // 약관 동의 검증
+    const missingTerms = [];
+    
     if (!termsAgreeCheckbox.checked) {
-      alert('서비스 약관에 동의해주세요.');
-      termsAgreeCheckbox.focus();
+      missingTerms.push('서비스 이용약관');
+    }
+    
+    if (!privacyAgreeCheckbox.checked) {
+      missingTerms.push('개인정보 처리방침');
+    }
+    
+    if (!ageAgreeCheckbox.checked) {
+      missingTerms.push('만 14세 이상 확인');
+    }
+    
+    if (missingTerms.length > 0) {
+      alert('다음 항목에 동의해주세요:\n• ' + missingTerms.join('\n• '));
       isValid = false;
     }
     
@@ -259,7 +300,6 @@
     }
     
     // 회원가입 성공 처리
-    const nickname = nicknameInput.value.trim() || '익명 사용자';
     
     // 실제로는 서버에 데이터 전송
     console.log('회원가입 정보:', {
