@@ -1,5 +1,15 @@
 // 마이페이지 초기화
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("=== 마이페이지 초기화 시작 ===");
+  console.log("setupThemeToggle:", typeof setupThemeToggle);
+  console.log("renderTodo:", typeof renderTodo);
+  console.log("renderCertDday:", typeof renderCertDday);
+  console.log("renderWeekProgress:", typeof renderWeekProgress);
+  console.log("renderCertList:", typeof renderCertList);
+  console.log("renderCommunityByKeywords:", typeof renderCommunityByKeywords);
+  console.log("renderExamSchedule:", typeof renderExamSchedule);
+  console.log("renderBookmarks:", typeof renderBookmarks);
+  
   setupThemeToggle();
   renderTodo("todo-week");
   renderCertDday(); // 관심 자격증 D-day
@@ -8,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // mypage.js — replace the community render line
   const interestKeywords = (DATA.userKeywords || []).length ? DATA.userKeywords : ["it", "데이터", "회계"];
   renderCommunityByKeywords("community-latest-2", interestKeywords, "관심 키워드 커뮤니티");
-  renderCalendar("calendar-2");
+  renderExamSchedule("exam-schedule-2");
   renderBookmarks("bookmark-2");
   
   // 프로필 편집 버튼 이벤트 리스너
