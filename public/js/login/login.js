@@ -129,8 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   kakaoBtn.addEventListener('click', () => {
-    handleSocialLogin('kakao');
+    // 비회원으로 시작 - 홈 화면으로 이동
+    window.location.href = 'index.html';
   });
+
+  // 로그인 상태 확인 - 이미 로그인되어 있으면 홈으로 리다이렉트
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  if (isLoggedIn) {
+    window.location.href = 'index.html';
+    return;
+  }
 
 
 
@@ -170,26 +178,51 @@ async function mockLogin(email, password, rememberMe) {
   // Mock API call - replace with actual authentication
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // Demo: Accept any email/password for testing
-      // In production, this would be an actual API call
-      if (email && password) {
-        // Save remember me preference
-        if (rememberMe) {
-          localStorage.setItem('rememberMe', 'true');
-          localStorage.setItem('savedEmail', email);
-        } else {
-          localStorage.removeItem('rememberMe');
-          localStorage.removeItem('savedEmail');
-        }
-
-        // Save login state (mock)
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('userEmail', email);
-        
-        resolve();
-      } else {
-        reject(new Error('이메일 또는 비밀번호가 올바르지 않습니다.'));
+      // TODO: 실제 DB 연결 시 아래 로직으로 교체
+      // Mock 데이터베이스 (테스트용)
+      const mockUsers = [
+        { email: 'test@example.com', password: 'test1234' },
+        { email: 'user@certhub.com', password: 'certhub123' }
+      ];
+      
+      // 1. 이메일 확인
+      const userExists = mockUsers.find(user => user.email === email);
+      
+      if (!userExists) {
+        // 이메일이 등록되지 않음
+        reject({ 
+          type: 'EMAIL_NOT_FOUND',
+          message: '등록되지 않은 이메일입니다.' 
+        });
+        return;
       }
+      
+      // 2. 비밀번호 확인
+      if (userExists.password !== password) {
+        // 비밀번호가 틀림
+        reject({ 
+          type: 'WRONG_PASSWORD',
+          message: '비밀번호가 올바르지 않습니다.' 
+        });
+        return;
+      }
+      
+      // 3. 로그인 성공
+      // Remember me 설정
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('savedEmail', email);
+      } else {
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('savedEmail');
+      }
+
+      // 로그인 상태 저장 (localStorage로 변경 - 로그인 상태 유지)
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('loginTimestamp', Date.now().toString());
+      
+      resolve();
     }, 1000);
   });
 }
