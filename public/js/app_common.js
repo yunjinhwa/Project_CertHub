@@ -153,18 +153,20 @@ window.renderCertList = function(containerId, title, items) {
   card.appendChild(createEl("h3", { class: "h3" }, [title]));
   const list = createEl("div", { class: "card-list mt-12" });
   items.forEach(c => {
-    const row = createEl("div", { class: "item", style: "cursor: pointer;" }, [
+    const detailBtn = createEl("button", { class: "btn ghost", style: "padding: 8px 20px; font-size: 13px; min-width: 90px;" }, ["자세히 보기"]);
+    
+    const row = createEl("div", { class: "item" }, [
       createEl("div", {}, [
         createEl("div", { class: "item-title" }, [c.name]),
         createEl("div", { class: "item-sub" }, [`${c.field} · 다음 시험 ${c.next}`])
       ]),
-      createEl("div", { class: "rating" }, ["★", createEl("span", {}, [String(c.rate)])])
+      detailBtn
     ]);
-    row.addEventListener("click", () => {
+    
+    detailBtn.addEventListener("click", () => {
       const detailContent = createEl("div", { style: "line-height: 1.8;" }, [
         createEl("p", {}, [`분야: ${c.field}`]),
         createEl("p", {}, [`다음 시험일: ${c.next}`]),
-        createEl("p", {}, [`사용자 평점: ${c.rate} / 5.0`]),
         createEl("p", { class: "mt-12" }, ["이곳에 해당 자격증의 시험 과목, 응시 자격, 합격률 등 더 자세한 정보가 표시될 예정입니다."]),
         createEl("div", { class: "mt-12 row", style: "gap: 8px;" }, [
           createEl("button", { class: "btn", onClick: () => showModal("알림", `'${c.name}' 시험 접수 페이지로 이동합니다.`) }, ["시험 접수하기"]),
@@ -173,6 +175,7 @@ window.renderCertList = function(containerId, title, items) {
       ]);
       showModal(`${c.name} 상세 정보`, detailContent);
     });
+    
     list.appendChild(row);
   });
   card.appendChild(list);
@@ -296,19 +299,35 @@ window.renderTodo = function(containerId) {
     return;
   }
   
-  // 상위 4개만 표시
-  const displayTodos = todos.slice(0, 4);
-  const hasMore = todos.length > 4;
-  
-  displayTodos.forEach(t => {
-    const text = typeof t === "string" ? t : (t.completed ? "✔ " : "□ ") + t.text;
-    ul.appendChild(createEl("li", {}, [text]));
+  // 모든 할일 표시 (스크롤 가능하도록)
+  todos.forEach((t, index) => {
+    const todo = typeof t === "string" ? { text: t, completed: false } : t;
+    const checkbox = todo.completed 
+      ? createEl("span", { class: "todo-checkbox-icon" }, ["✔️"])
+      : createEl("span", { class: "todo-checkbox-icon empty" }, ["□"]);
+    
+    const todoItem = createEl("li", {
+      class: todo.completed ? "completed" : "",
+      style: "cursor: pointer; display: flex; align-items: center; gap: 8px;",
+      onClick: () => {
+        if (window.todoManager) {
+          const todoObj = window.todoManager.todos[index];
+          if (todoObj) {
+            todoObj.completed = !todoObj.completed;
+            renderTodo(containerId);
+            updateWeekProgress();
+          }
+        }
+      }
+    }, [
+      checkbox,
+      createEl("span", { 
+        style: todo.completed ? "text-decoration: line-through; opacity: 0.6;" : "" 
+      }, [todo.text])
+    ]);
+    
+    ul.appendChild(todoItem);
   });
-  
-  // 더 있으면 ... 표시
-  if (hasMore) {
-    ul.appendChild(createEl("li", { class: "muted", style: "font-style: italic;" }, [`... 외 ${todos.length - 4}개`]));
-  }
 };
 
 // 이번 주 할 일 진행률 업데이트

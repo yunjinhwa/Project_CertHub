@@ -14,7 +14,6 @@ window.showTodoManagerModal = function() {
     isEditMode = !isEditMode;
     renderTodoList();
     editBtn.textContent = isEditMode ? "완료" : "수정";
-    addBtn.style.display = isEditMode ? "inline-flex" : "none";
   };
 
   const changeSortMode = () => {
@@ -43,6 +42,21 @@ window.showTodoManagerModal = function() {
   };
 
   const saveTodos = () => {
+    // 2주(14일) 경과한 할 일 자동 삭제
+    const now = new Date();
+    const twoWeeksInMs = 14 * 24 * 60 * 60 * 1000; // 14일을 밀리초로
+    
+    currentTodos = currentTodos.filter(todo => {
+      if (!todo.createdAt) {
+        // createdAt이 없는 기존 항목은 현재 시간으로 설정
+        todo.createdAt = new Date().toISOString();
+        return true;
+      }
+      const createdDate = new Date(todo.createdAt);
+      const elapsed = now - createdDate;
+      return elapsed < twoWeeksInMs; // 2주 이내인 항목만 유지
+    });
+    
     // API 호출 예정 지점
     todoManager.todos = JSON.parse(JSON.stringify(currentTodos));
     
@@ -63,7 +77,8 @@ window.showTodoManagerModal = function() {
       id: tempId,
       text: "",
       completed: false,
-      isNew: true
+      isNew: true,
+      createdAt: new Date().toISOString() // 생성일 추가
     });
     renderTodoList();
     
@@ -135,12 +150,7 @@ window.showTodoManagerModal = function() {
     
     if (currentTodos.length === 0) {
       const emptyState = createEl("div", { class: "todo-empty" }, [
-        createEl("div", { class: "todo-empty-text" }, ["할 일이 없습니다. 추가해보세요!"]),
-        createEl("button", {
-          class: "btn",
-          style: "margin-top: 16px;",
-          onClick: addTodo
-        }, ["+ 할 일 추가하기"])
+        createEl("div", { class: "todo-empty-text" }, ["할 일이 없습니다."])
       ]);
       todoListContainer.appendChild(emptyState);
       return;
@@ -200,6 +210,7 @@ window.showTodoManagerModal = function() {
             todo.id = todoManager.nextId++;
             todo.text = newText;
             delete todo.isNew;
+            // createdAt은 유지 (이미 addTodo에서 설정됨)
           } else {
             // 공백이면 삭제
             currentTodos = currentTodos.filter(t => t.id !== todo.id);
@@ -259,8 +270,7 @@ window.showTodoManagerModal = function() {
   const addBtn = createEl("button", {
     class: "btn",
     type: "button",
-    onClick: addTodo,
-    style: "display: none;"
+    onClick: addTodo
   }, ["+ 할 일 추가"]);
 
   const sortBtn = createEl("button", {
