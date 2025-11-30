@@ -25,3 +25,12 @@ export async function fetchSchedule(jmCd = "", year = "") {
     const parser = new DOMParser();
     return parser.parseFromString(xmlText, "text/xml");
 }
+
+// 응시자격별 통계 데이터
+export async function fetchExamStats(grdCd = '10', year = '2023') {
+    const res = await fetch(`/api/exam/stats?grdCd=${grdCd}&baseYY=${year}`);
+    const xmlText = await res.text();
+
+    const parser = new DOMParser();
+    return parser.parseFromString(xmlText, "text/xml");
+}

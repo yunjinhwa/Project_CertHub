@@ -6,80 +6,120 @@ const fetch = require("node-fetch");
 const app = express();
 app.use(cors());
 
-const SERVICE_KEY = "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
-const ENC_KEY = encodeURIComponent(SERVICE_KEY);
-
-// ===========================================================
-// ① 자격증 목록 API
-// ===========================================================
+// ===============================================
+// 자격증 목록 API
+// ===============================================
 app.get("/api/cert", async (req, res) => {
-  const keyword = req.query.name || "";
+  const certName = req.query.name || "";
+  const serviceKey = "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
 
-  const url =
-    `http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList` +
-    `?serviceKey=${ENC_KEY}` +
-    `&jmNm=${encodeURIComponent(keyword)}` +
-    `&pageNo=1&numOfRows=200`;
+  const baseUrl =
+    "http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList";
+
+  const query =
+    `?serviceKey=${serviceKey}` +
+    `&jmNm=${encodeURIComponent(certName)}` +
+    `&pageNo=1&numOfRows=100`;
 
   try {
-    const response = await fetch(url);
-    const xml = await response.text();
+    const response = await fetch(baseUrl + query);
+    const xmlText = await response.text();
     res.set("Content-Type", "application/xml; charset=utf-8");
-    res.send(xml);
-  } catch (err) {
-    console.error("목록 API 오류:", err);
-    res.status(500).send("서버 오류: " + err.message);
+    res.send(xmlText);
+  } catch (error) {
+    res.status(500).send("서버 오류: " + error.message);
   }
 });
 
-// ===========================================================
-// ② 자격 상세 API
-// ===========================================================
+// ===============================================
+// 자격 상세 조회 API
+// ===============================================
 app.get("/api/cert/detail", async (req, res) => {
   const jmCd = req.query.jmcd;
-  if (!jmCd) return res.status(400).send("jmcd is required.");
+  if (!jmCd) return res.status(400).send("jmcd parameter is required.");
 
-  const url =
-    `http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList` +
-    `?serviceKey=${ENC_KEY}` +
-    `&jmCd=${encodeURIComponent(jmCd)}`;
+  const serviceKey =
+    "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
+
+  const baseUrl =
+    "http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList";
+
+  const query = `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}`;
 
   try {
-    const response = await fetch(url);
-    const xml = await response.text();
+    const response = await fetch(baseUrl + query);
+    const xmlText = await response.text();
     res.set("Content-Type", "application/xml; charset=utf-8");
-    res.send(xml);
-  } catch (err) {
-    console.error("상세 API 오류:", err);
-    res.status(500).send("서버 오류: " + err.message);
+    res.send(xmlText);
+  } catch (error) {
+    res.status(500).send("서버 오류: " + error.message);
   }
 });
 
-// ===========================================================
-// ③ 시험 일정 API
-// ===========================================================
+// ===============================================
+// 시험 일정 API
+// ===============================================
 app.get("/api/schedule", async (req, res) => {
   const jmCd = req.query.jmcd;
-  const year = req.query.year;
+  let year = req.query.year || req.query.implYy;
 
-  if (!jmCd) return res.status(400).send("jmcd is required.");
+  if (!jmCd) return res.status(400).send("jmcd parameter is required.");
+  if (!year || year.trim() === "") year = String(new Date().getFullYear());
 
-  const url =
-    `http://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList` +
-    `?serviceKey=${ENC_KEY}` +
+  const serviceKey =
+    "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
+
+  const baseUrl =
+    "https://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList";
+
+  const query =
+    `?serviceKey=${encodeURIComponent(serviceKey)}` +
     `&dataFormat=xml` +
     `&jmCd=${encodeURIComponent(jmCd)}` +
-    (year ? `&implYy=${encodeURIComponent(year)}` : "");
+    `&implYy=${encodeURIComponent(year)}` +
+    `&pageNo=1&numOfRows=20`;
 
   try {
-    const response = await fetch(url);
-    const xml = await response.text();
+    const response = await fetch(baseUrl + query);
+    const xmlText = await response.text();
     res.set("Content-Type", "application/xml; charset=utf-8");
-    res.send(xml);
-  } catch (err) {
-    console.error("시험 일정 API 오류:", err);
-    res.status(500).send("서버 오류: " + err.message);
+    res.send(xmlText);
+  } catch (error) {
+    res.status(500).send("서버 오류: " + error.message);
   }
 });
+// ===============================================
+// 응시자격별 원서접수 및 합격 현황 조회 API (TOP 응시자수 데이터)
+// ===============================================
+app.get("/api/exam/stats", async (req, res) => {
+  const grdCd = req.query.grdCd || "10";     // 기능사 기본값
+  const baseYY = req.query.baseYY || "2023"; // 연도 기본값
+
+  const serviceKey =
+    "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
+
+  const baseUrl =
+    "http://openapi.q-net.or.kr/api/service/rest/InquiryEmqualPassSVC/getList";
+
+  const query =
+    `?serviceKey=${encodeURIComponent(serviceKey)}` +
+    `&dataFormat=xml` +
+    `&grdCd=${grdCd}` +
+    `&baseYY=${baseYY}` +
+    `&pageNo=1&numOfRows=2000`;
+
+  try {
+    const response = await fetch(baseUrl + query);
+    const xmlText = await response.text();
+    res.set("Content-Type", "application/xml; charset=utf-8");
+    res.send(xmlText);
+  } catch (error) {
+    console.error("시험 현황 호출 오류:", error);
+    res.status(500).send("서버 오류: " + error.message);
+  }
+});
+// ===============================================
+// Firebase Functions로 Export
+// ===============================================
 
 exports.api = functions.https.onRequest(app);

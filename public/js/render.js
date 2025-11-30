@@ -117,3 +117,52 @@ export function renderScheduleList(items, container) {
     });
 }
 
+// 📌 응시자격별 TOP10 카드 렌더링
+export function renderExamStatsList(items, container) {
+    container.innerHTML = "";
+
+    if (!items || !items.length) {
+        container.innerHTML = "<p>데이터가 없습니다.</p>";
+        return;
+    }
+
+    // 1️⃣ XML → JS 객체 변환 (너가 원하는 부분)
+    const dataList = Array.from(items).map(item => ({
+        name: item.getElementsByTagName("emqualDispNm")[0]?.textContent || "이름없음",
+        qualDisp: item.getElementsByTagName("grdNm")[0]?.textContent || "-",
+        implYy: item.getElementsByTagName("implYy")[0]?.textContent || "-",
+        implSeq: item.getElementsByTagName("implSeq")[0]?.textContent || "-",
+        apply: Number(item.getElementsByTagName("recptCnt")[0]?.textContent || 0),
+        pilPass: Number(item.getElementsByTagName("pilPassCnt")[0]?.textContent || 0),
+        silPass: Number(item.getElementsByTagName("silPassCnt")[0]?.textContent || 0),
+    }));
+
+    // 2️⃣ 접수자 수 기준 정렬
+    dataList.sort((a, b) => b.apply - a.apply);
+
+    if (!dataList.length) {
+        container.innerHTML = "<p>데이터가 없습니다.</p>";
+        return;
+    }
+
+    // 3️⃣ 상위 10개 렌더링
+    dataList.slice(0, 10).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "exam-stat-card";
+
+        div.innerHTML = `
+            <h3>${item.name}</h3>
+
+            <p>🧾 응시자격: ${item.qualDisp}</p>
+            <p>📅 시행년도: ${item.implYy}</p>
+            <p>🔢 회차: ${item.implSeq}</p>
+
+            <p>📝 접수자 수: <strong>${item.apply.toLocaleString()}</strong> 명</p>
+            <p>✏️ 필기 합격: ${item.pilPass.toLocaleString()} 명</p>
+            <p>🛠 실기 합격: ${item.silPass.toLocaleString()} 명</p>
+        `;
+
+        container.appendChild(div);
+    });
+}
+

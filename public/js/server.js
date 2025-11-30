@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch'); // node-fetch@2 설치 필수!
+const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
 const app = express();
 const PORT = 3000;
@@ -12,7 +13,7 @@ app.use(cors());
 // =============================================== 자격증 목록 ===============================================
 app.get('/api/cert', async (req, res) => {
   const certName = req.query.name || '';
-  const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
+  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   // Q-Net 공공데이터 API 원본 URL
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList';
@@ -51,7 +52,7 @@ app.get('/api/cert/detail', async (req, res) => {
   const jmCd = req.query.jmcd;
   if (!jmCd) return res.status(400).send("jmcd parameter is required.");
 
-  const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
+  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList';
 
@@ -85,7 +86,7 @@ app.get('/api/schedule', async (req, res) => {
   if (!year || year.trim() === "") {
     year = String(new Date().getFullYear());
   }
-  const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
+  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   const baseUrl =
     'https://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList';
@@ -111,3 +112,30 @@ app.get('/api/schedule', async (req, res) => {
   }
 });
 
+// =============================================== 응시자격별 원서접수 및 합격 현황 API ===============================================
+app.get('/api/exam/stats', async (req, res) => {
+  const grdCd = req.query.grdCd || '10';     // 등급코드
+  const baseYY = req.query.baseYY || '2023'; // 연도 기본값
+
+  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
+
+  const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryEmqualPassSVC/getList';
+
+  const url =
+    `${baseUrl}?serviceKey=${encodeURIComponent(serviceKey)}` +
+    `&dataFormat=xml` +
+    `&grdCd=${encodeURIComponent(grdCd)}` +
+    `&baseYY=${encodeURIComponent(baseYY)}` +
+    `&pageNo=1&numOfRows=2000`;
+
+  try {
+    const response = await fetch(url);
+    const xmlText = await response.text();
+
+    res.set("Content-Type", "application/xml; charset=utf-8");
+    res.send(xmlText);
+  } catch (error) {
+    console.error("응시현황 API 오류:", error);
+    res.status(500).send("서버 오류: " + error.message);
+  }
+});

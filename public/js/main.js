@@ -1,10 +1,10 @@
 // js/main.js
-
-import { fetchCertificates, fetchSchedule, getItemsFromXML } from "./api.js";
+// 실행 시키는 명령어 firebase emulators:start --only hosting,functions
+import { fetchCertificates, fetchSchedule,fetchExamStats, getItemsFromXML } from "./api.js";
 import { handleAutocomplete } from "./autocomplete.js";
 import { searchCertificate } from "./search.js";
 import { setAllItems, loadMoreItems, handleDivScroll } from "./pagination.js";
-import { renderScheduleList } from "./render.js";
+import { renderScheduleList, renderExamStatsList } from "./render.js";
 import { loadDetailInfo, closeModal } from "./detail.js";
 
 document.addEventListener("DOMContentLoaded", initPage);
@@ -46,6 +46,7 @@ async function initPage() {
 
     // 🔹 시험 일정 출력 실행
     await loadScheduleToCalendar();
+    await loadTopApplyList();
 }
 
 // ===========================================
@@ -62,16 +63,29 @@ document.getElementById("detailModal").addEventListener("click", (e) => {
 // 🔹 시험 일정 불러오기 함수
 // ===========================================
 async function loadScheduleToCalendar() {
-    const calendarDiv = document.getElementById("calendar-section");
+    const scheduleContainer = document.getElementById("results_calendar");
 
     // 기존 제목 유지한 채 내용만 출력하도록 목표 div 선택
-    const scheduleArea = document.createElement("div");
-    scheduleArea.id = "calendar-list";
-    calendarDiv.appendChild(scheduleArea);
 
-    const defaultJmCd = "7910"; // 정보처리기사 예시
+    const defaultJmCd = "7910"; // 임시코드임
     const xmlDoc = await fetchSchedule(defaultJmCd, "2025");
     const items = getItemsFromXML(xmlDoc);
 
-    renderScheduleList(items, scheduleArea);
+    document.getElementById("scrollContainer-calendar").addEventListener("scroll", handleDivScroll);
+    renderScheduleList(items, scheduleContainer);
+}
+
+// ----------------------------
+// 📌 응시률이 높은 자격증 TOP 리스트
+// ----------------------------
+async function loadTopApplyList() {
+    const container = document.getElementById("certlist-trending");
+    container.innerHTML = "<p>데이터 불러오는 중...</p>";
+
+    const xmlDoc = await fetchExamStats("10", "2023");
+    const items = getItemsFromXML(xmlDoc);
+
+    document.getElementById("scrollContainer-trending").addEventListener("scroll", handleDivScroll);
+    // 👇 데이터 파싱 + 정렬 + 렌더링 전부 renderExamStatsList에서 처리
+    renderExamStatsList(items, container);
 }

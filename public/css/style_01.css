@@ -360,3 +360,10 @@ a:hover {
 /* ======================================
    4. 자격증 시험 일정
 ====================================== */
+#scrollContainer-calendar,
+#scrollContainer-trending,
+#scrollContainer {
+    max-height: 360px;  /* 원하는 크기로 조절 */
+    overflow-y: auto;
+    padding-right: 10px;
+}
