@@ -1,4 +1,9 @@
-// js/render.js
+/*
+    // js/render.js
+    - 화면 렌더링만 담당(XML 데이터를 받아 HTML 요소를 만들어 화면에 표시)
+    - XML 데이터를 HTML UI로 렌더링
+*/
+
 
 // ⭐ detail.js에서 상세정보 가져오기 함수 가져옴
 import { loadDetailInfo } from "./detail.js";
@@ -123,7 +128,7 @@ export function renderScheduleList(items, container) {
 
 // ================================================================================================================================== //
 
-// 시자격별 통계 렌더링(renderExamStatsList) - 합격/접수 통계 XML을 Top10 형태로 보여주는 기능
+// 자격별 통계 렌더링(renderExamStatsList) - 합격/접수 통계 XML을 Top10 형태로 보여주는 기능
 export function renderExamStatsList(items, container) {
     container.innerHTML = "";
 

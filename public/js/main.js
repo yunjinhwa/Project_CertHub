@@ -1,4 +1,9 @@
-// js/main.js
+/*
+    // js/main.js
+     - 페이지 로드 → API 호출 → 렌더링 → 이벤트 등록
+     - 페이지 초기화, 이벤트 처리, API 호출 흐름 제어
+*/
+
 // 실행 시키는 명령어 firebase emulators:start --only hosting,functions
 import { fetchCertificates, fetchSchedule,fetchExamStats, getItemsFromXML } from "./api.js";
 import { handleAutocomplete } from "./autocomplete.js";

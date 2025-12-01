@@ -1,4 +1,9 @@
-// js/api.js
+/*
+    // js/api.js
+     - Q-Net 공공데이터 API를 호출해 XML 데이터를 가져오고, 이를 JS DOM 형태로 변환하는 기능만 담당
+     - 서버와 통신 / XML → JS DOM 변환
+*/
+
 
 // 자격 목록
 export async function fetchCertificates(keyword = "") {
