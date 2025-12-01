@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>추천 시스템 테스트</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .user-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .user-btn {
+      padding: 8px 16px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .user-btn:hover {
+      border-color: #007bff;
+      background: #f0f8ff;
+    }
+    .user-btn.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    .cert-list {
+      display: grid;
+      gap: 12px;
+    }
+    .cert-item {
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafafa;
+    }
+    .cert-info {
+      flex: 1;
+    }
+    .cert-name {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .cert-meta {
+      font-size: 14px;
+      color: #666;
+    }
+    .cert-stats {
+      text-align: right;
+      color: #007bff;
+      font-weight: 600;
+    }
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .stat-box {
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .bookmark-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .bookmark-tag {
+      padding: 4px 12px;
+      background: #e3f2fd;
+      border-radius: 16px;
+      font-size: 13px;
+      color: #1976d2;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .error {
+      padding: 16px;
+      background: #fee;
+      border: 1px solid #fcc;
+      border-radius: 4px;
+      color: #c33;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 추천 시스템 테스트</h1>
+    <p>더미 데이터를 기반으로 자격증 추천 시스템을 테스트합니다.</p>
+  </div>
+
+  <div class="container">
+    <h2>사용자 선택</h2>
+    <div class="user-selector" id="userSelector"></div>
+  </div>
+
+  <div class="container">
+    <h2>통계</h2>
+    <div class="stats-container" id="statsContainer">
+      <div class="loading">로딩 중...</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>추천 결과</h2>
+    <div id="recommendations">
+      <div class="loading">사용자를 선택해주세요...</div>
+    </div>
+  </div>
+
+  <script src="js/recommendation.js"></script>
+  <script>
+    let dummyData = null;
+    let currentUser = 'user001';
+
+    // 페이지 로드 시 더미 데이터 가져오기
+    async function init() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/Dummy_data/dummy_data.json');
+        dummyData = await response.json();
+        
+        renderUserSelector();
+        renderStats();
+        loadRecommendations(currentUser);
+      } catch (error) {
+        console.error('초기화 실패:', error);
+        document.getElementById('recommendations').innerHTML = 
+          '<div class="error">더미 데이터를 로드할 수 없습니다: ' + error.message + '</div>';
+      }
+    }
+
+    // 사용자 선택 버튼 렌더링
+    function renderUserSelector() {
+      const container = document.getElementById('userSelector');
+      container.innerHTML = '';
+      
+      for (let i = 1; i <= 10; i++) {
+        const userId = `user${String(i).padStart(3, '0')}`;
+        const btn = document.createElement('button');
+        btn.className = 'user-btn' + (userId === currentUser ? ' active' : '');
+        btn.textContent = `User ${i}`;
+        btn.onclick = () => {
+          currentUser = userId;
+          renderUserSelector();
+          renderStats();
+          loadRecommendations(userId);
+        };
+        container.appendChild(btn);
+      }
+    }
+
+    // 통계 렌더링
+    function renderStats() {
+      const container = document.getElementById('statsContainer');
+      container.innerHTML = '';
+
+      // 해당 사용자의 북마크
+      const userBookmarks = dummyData.bookmarks.filter(b => b.uid === currentUser);
+      const bookmarkedCertIds = userBookmarks.map(b => b.certId);
+
+      // 전체 클릭 수
+      const totalClicks = dummyData.search_clicks.length;
+      
+      // 사용자별 클릭 수
+      const userClicks = dummyData.search_clicks.filter(c => c.uid === currentUser).length;
+
+      // 통계 박스들
+      const stats = [
+        { label: '북마크 수', value: userBookmarks.length },
+        { label: '전체 클릭 데이터', value: totalClicks },
+        { label: '사용자 클릭 수', value: userClicks },
+        { label: '사용자 수', value: dummyData.users.length }
+      ];
+
+      stats.forEach(stat => {
+        const box = document.createElement('div');
+        box.className = 'stat-box';
+        box.innerHTML = `
+          <div class="stat-value">${stat.value}</div>
+          <div class="stat-label">${stat.label}</div>
+        `;
+        container.appendChild(box);
+      });
+
+      // 북마크 목록 표시
+      if (bookmarkedCertIds.length > 0) {
+        const bookmarkBox = document.createElement('div');
+        bookmarkBox.className = 'stat-box';
+        bookmarkBox.style.gridColumn = '1 / -1';
+        bookmarkBox.innerHTML = `
+          <div class="stat-label">북마크한 자격증</div>
+          <div class="bookmark-list">
+            ${bookmarkedCertIds.map(id => `<span class="bookmark-tag">${id}</span>`).join('')}
+          </div>
+        `;
+        container.appendChild(bookmarkBox);
+      }
+    }
+
+    // 추천 결과 로드
+    async function loadRecommendations(userId) {
+      const container = document.getElementById('recommendations');
+      container.innerHTML = '<div class="loading">추천 생성 중...</div>';
+
+      try {
+        const recommendations = await window.generateRecommendations(dummyData, userId);
+        
+        if (recommendations.length === 0) {
+          container.innerHTML = '<div class="error">추천 결과가 없습니다.</div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        const list = document.createElement('div');
+        list.className = 'cert-list';
+
+        recommendations.forEach((cert, index) => {
+          const item = document.createElement('div');
+          item.className = 'cert-item';
+          item.innerHTML = `
+            <div class="cert-info">
+              <div class="cert-name">${index + 1}. ${cert.name}</div>
+              <div class="cert-meta">
+                ${cert.field} · 다음 시험: ${cert.next} · 평점: ${cert.rate}
+              </div>
+            </div>
+            <div class="cert-stats">
+              🔥 ${cert.clickCount}회 클릭
+            </div>
+          `;
+          list.appendChild(item);
+        });
+
+        container.appendChild(list);
+
+        // 콘솔에도 로그 출력
+        console.log('=== 추천 결과 (', userId, ') ===');
+        console.table(recommendations);
+      } catch (error) {
+        console.error('추천 생성 실패:', error);
+        container.innerHTML = '<div class="error">추천 생성 중 오류 발생: ' + error.message + '</div>';
+      }
+    }
+
+    // 초기화
+    init();
+  </script>
+</body>
+</html>
