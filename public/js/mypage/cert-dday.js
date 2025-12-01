@@ -35,7 +35,7 @@ window.renderCertDday = function() {
   // 북마크 목록 표시 (클릭 불가능)
   container.innerHTML = `
     <div class="row-between mb-12">
-      <h3 class="h3">디데이</h3>
+      <h3 class="h3">D-Day</h3>
     </div>
     <ul class="cert-bookmark-list" id="certBookmarkList"></ul>
   `;
