@@ -3,18 +3,21 @@
 // ⭐ detail.js에서 상세정보 가져오기 함수 가져옴
 import { loadDetailInfo } from "./detail.js";
 
-// 자격증 목록 렌더링 + 자세히 버튼 포함
+// 1) 자격증 목록 렌더링 기능 (renderListItem) --> 검색창에서 자격증을 검색했을 때, “자격증 정보 + 자세히 버튼” 형태의 리스트를 만드는 함수
 export function renderListItem(item, container) {
+    // XML에서 필요한 정보 추출 - 자격증 이름, 등급(기능사/기사), 산업분류 등 정보를 읽어옴
     const jmfldnm = item.getElementsByTagName('jmfldnm')[0]?.textContent || '없음';
     const qualgbnm = item.getElementsByTagName('qualgbnm')[0]?.textContent || '없음';
     const seriesnm = item.getElementsByTagName('seriesnm')[0]?.textContent || '없음';
     const obligfldnm = item.getElementsByTagName('obligfldnm')[0]?.textContent || '없음';
     const mdobligfldnm = item.getElementsByTagName('mdobligfldnm')[0]?.textContent || '없음';
-    const jmcd = item.getElementsByTagName('jmcd')[0]?.textContent || ''; // ⭐ 상세조회 API에 필요
+    const jmcd = item.getElementsByTagName('jmcd')[0]?.textContent || ''; // 상세조회 API에 필요
 
+    // 자격증 하나당 하나의 리스트 아이템 생성
     const div = document.createElement("div");
     div.className = "list-item";
 
+    // UI 구성: 자격증 이름 + 태그 + 자세히 버튼
     div.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
@@ -37,21 +40,22 @@ export function renderListItem(item, container) {
     div.querySelector(".detail-btn").addEventListener("click", () => loadDetailInfo(jmcd));
 
 
-    // ⭐ 버튼 이벤트 등록 → 모달 열림
+    // “자세히” 버튼 클릭 → loadDetailInfo(jmcd) - 자격증 상세조회 API로 이동해 모달을 띄움
     const btn = div.querySelector(".detail-btn");
     btn.addEventListener("click", () => loadDetailInfo(jmcd));
 }
 
+// ================================================================================================================================== //
 
-// 📅 시험 일정 출력 함수
+// 시험 일정 렌더링(renderScheduleList) - 시험 일정 API(XML) 데이터를 화면에 보기 좋게 정리해서 보여주는 기능
 export function renderScheduleList(items, container) {
-    container.innerHTML = ""; // 기존 내용 삭제
+    container.innerHTML = ""; // 기존 화면 초기화 --> '시험 일정 불러오는 중' 을 화면에서 제거
 
-    // 🔥 오늘 날짜 (00:00 기준)
+    // 오늘 날짜 (00:00 기준) - 날짜 비교
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 🔥 YYYYMMDD → Date 객체 변환 함수
+    // YYYYMMDD → Date 객체 변환 함수 - XML 데이터가 20250216 형식이므로 변환 필수
     function toDate(yyyymmdd) {
         if (!yyyymmdd || yyyymmdd === "-") return null;
         const y = Number(yyyymmdd.substring(0, 4));
@@ -60,7 +64,7 @@ export function renderScheduleList(items, container) {
         return new Date(y, m, d);
     }
 
-    // 🔥 docRegendDt (원서 접수 종료일)이 오늘보다 이전인 일정 제외!
+    // 원서접수 종료일(endDate)가 오늘 이전이면 제외 - 이미 끝난 일정 안 보여줌, 현재 또는 미래 일정만 표시
     const upcomingItems = items.filter(item => {
         const end = item.getElementsByTagName("docRegEndDt")[0]?.textContent || "-";
         const endDate = toDate(end);
@@ -77,14 +81,14 @@ export function renderScheduleList(items, container) {
         return;
     }
 
-    // 🔥 날짜 빠른 순 정렬 (원서접수 시작일 기준)
+    // 정렬 (원서접수시작일 빠른 순)
     upcomingItems.sort((a, b) => {
         const aStart = toDate(a.getElementsByTagName("docRegStartDt")[0]?.textContent);
         const bStart = toDate(b.getElementsByTagName("docRegStartDt")[0]?.textContent);
         return aStart - bStart;
     });
 
-    // 🔥 필터 + 정렬된 일정 출력
+    // 필터 + 정렬된 일정 출력 - 시행년도(implYy), 회차(implSeq), 접수기간(docRegStartDt ~ docRegEndDt), 시험기간, 발표일
     upcomingItems.forEach(item => {
         const implYy = item.getElementsByTagName("implYy")[0]?.textContent || "";
         const implSeq = item.getElementsByTagName("implSeq")[0]?.textContent || "";
@@ -117,16 +121,19 @@ export function renderScheduleList(items, container) {
     });
 }
 
-// 📌 응시자격별 TOP10 카드 렌더링
+// ================================================================================================================================== //
+
+// 시자격별 통계 렌더링(renderExamStatsList) - 합격/접수 통계 XML을 Top10 형태로 보여주는 기능
 export function renderExamStatsList(items, container) {
     container.innerHTML = "";
 
+    // 아이템 없으면 “데이터 없음”
     if (!items || !items.length) {
         container.innerHTML = "<p>데이터가 없습니다.</p>";
         return;
     }
 
-    // 1️⃣ XML → JS 객체 변환 (너가 원하는 부분)
+    // XML → JS 객체 변환 - 정렬/비교가 가능해짐
     const dataList = Array.from(items).map(item => ({
         name: item.getElementsByTagName("emqualDispNm")[0]?.textContent || "이름없음",
         qualDisp: item.getElementsByTagName("grdNm")[0]?.textContent || "-",
@@ -137,7 +144,7 @@ export function renderExamStatsList(items, container) {
         silPass: Number(item.getElementsByTagName("silPassCnt")[0]?.textContent || 0),
     }));
 
-    // 2️⃣ 접수자 수 기준 정렬
+    // 접수자 수 기준 정렬 - 가장 인기가 많은/응시자가 많은 자격증을 상위에 배치
     dataList.sort((a, b) => b.apply - a.apply);
 
     if (!dataList.length) {
@@ -145,7 +152,7 @@ export function renderExamStatsList(items, container) {
         return;
     }
 
-    // 3️⃣ 상위 10개 렌더링
+    // Top10만 가져오기
     dataList.slice(0, 10).forEach(item => {
         const div = document.createElement("div");
         div.className = "exam-stat-card";

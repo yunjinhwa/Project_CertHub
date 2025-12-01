@@ -13,7 +13,6 @@ app.use(cors());
 // =============================================== 자격증 목록 ===============================================
 app.get('/api/cert', async (req, res) => {
   const certName = req.query.name || '';
-  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   // Q-Net 공공데이터 API 원본 URL
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList';
@@ -52,8 +51,6 @@ app.get('/api/cert/detail', async (req, res) => {
   const jmCd = req.query.jmcd;
   if (!jmCd) return res.status(400).send("jmcd parameter is required.");
 
-  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
-
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList';
 
   const query =
@@ -86,7 +83,6 @@ app.get('/api/schedule', async (req, res) => {
   if (!year || year.trim() === "") {
     year = String(new Date().getFullYear());
   }
-  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   const baseUrl =
     'https://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList';
@@ -116,8 +112,6 @@ app.get('/api/schedule', async (req, res) => {
 app.get('/api/exam/stats', async (req, res) => {
   const grdCd = req.query.grdCd || '10';     // 등급코드
   const baseYY = req.query.baseYY || '2023'; // 연도 기본값
-
-  //const serviceKey = '6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd';
 
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryEmqualPassSVC/getList';
 
