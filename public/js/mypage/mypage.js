@@ -1,5 +1,5 @@
 // 마이페이지 초기화
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   console.log("=== 마이페이지 초기화 시작 ===");
   console.log("setupThemeToggle:", typeof setupThemeToggle);
   console.log("renderTodo:", typeof renderTodo);
@@ -14,7 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTodo("todo-week");
   renderCertDday(); // 관심 자격증 D-day
   renderWeekProgress(); // 이번 주 할 일 진행률
-  renderCertList("certlist-reco", "관심 기반 추천", DATA.certsReco);
+  
+  // 더미 데이터 기반 추천 시스템 사용
+  const currentUserId = localStorage.getItem('currentUserId') || 'user001'; // 실제로는 로그인된 사용자 ID를 사용
+  try {
+    const recommendations = await loadDummyDataAndGenerateRecommendations(currentUserId);
+    if (recommendations && recommendations.length > 0) {
+      renderCertList("certlist-reco", "관심 기반 추천", recommendations);
+    } else {
+      renderCertList("certlist-reco", "관심 기반 추천", DATA.certsReco);
+    }
+  } catch (error) {
+    console.error('추천 시스템 로드 실패:', error);
+    renderCertList("certlist-reco", "관심 기반 추천", DATA.certsReco);
+  }
+  
   // mypage.js — replace the community render line
   const interestKeywords = (DATA.userKeywords || []).length ? DATA.userKeywords : ["it", "데이터", "회계"];
   renderCommunityByKeywords("community-latest-2", interestKeywords, "관심 키워드 커뮤니티");
