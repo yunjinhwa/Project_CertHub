@@ -278,57 +278,102 @@ window.renderCalendar = function(containerId) {
   host.appendChild(card);
   onSearch(""); // 초기 목록 렌더링
 };
-window.renderTodo = function(containerId) {
-  const ul = $("#" + containerId); 
+// 이번 주 할 일 카드 렌더링 + 체크 시 Firestore 반영
+window.renderTodo = function (containerId) {
+  const ul = $("#" + containerId);
+  if (!ul) return;
+
   ul.innerHTML = "";
-  
+
   // todoManager가 있으면 사용, 없으면 DATA.todos 사용
   const todos = window.todoManager ? window.todoManager.todos : DATA.todos;
-  
+
   // 할 일이 없을 때
-  if (todos.length === 0) {
-    const emptyState = createEl("div", { 
-      class: "empty-state"
-    }, [
+  if (!todos || todos.length === 0) {
+    const emptyState = createEl("div", { class: "empty-state" }, [
       createEl("div", { class: "empty-state-content" }, [
         createEl("div", { class: "empty-state-text" }, ["이번 주 할 일이 없습니다"]),
-        createEl("div", { class: "empty-state-subtext" }, ["관리 버튼을 눌러 할 일을 추가해보세요"])
-      ])
+        createEl("div", { class: "empty-state-subtext" }, [
+          "관리 버튼을 눌러 할 일을 추가해보세요",
+        ]),
+      ]),
     ]);
     ul.appendChild(emptyState);
     return;
   }
-  
-  // 모든 할일 표시 (스크롤 가능하도록)
+
+  // 모든 할 일 표시
   todos.forEach((t, index) => {
     const todo = typeof t === "string" ? { text: t, completed: false } : t;
-    const checkbox = todo.completed 
+
+    const checkbox = todo.completed
       ? createEl("span", { class: "todo-checkbox-icon" }, ["✔️"])
       : createEl("span", { class: "todo-checkbox-icon empty" }, ["□"]);
-    
-    const todoItem = createEl("li", {
-      class: todo.completed ? "completed" : "",
-      style: "cursor: pointer; display: flex; align-items: center; gap: 8px;",
-      onClick: () => {
-        if (window.todoManager) {
+
+    const todoItem = createEl(
+      "li",
+      {
+        class: todo.completed ? "completed" : "",
+        style:
+          "cursor: pointer; display: flex; align-items: center; gap: 8px;",
+        onClick: async () => {
+          if (!window.todoManager) return;
+
           const todoObj = window.todoManager.todos[index];
-          if (todoObj) {
-            todoObj.completed = !todoObj.completed;
-            renderTodo(containerId);
+          if (!todoObj) return;
+
+          // 1) UI & 로컬 상태 먼저 토글
+          const newCompleted = !todoObj.completed;
+          todoObj.completed = newCompleted;
+
+          renderTodo(containerId);
+          if (typeof updateWeekProgress === "function") {
             updateWeekProgress();
           }
-        }
-      }
-    }, [
-      checkbox,
-      createEl("span", { 
-        style: todo.completed ? "text-decoration: line-through; opacity: 0.6;" : "" 
-      }, [todo.text])
-    ]);
-    
+
+          // 2) Firestore에도 반영
+          try {
+            if (
+              window.firebaseTodosWeekApi &&
+              typeof window.firebaseTodosWeekApi.updateTodoWeek === "function" &&
+              typeof todoObj.id === "string" &&
+              todoObj.id.length > 0
+            ) {
+              await window.firebaseTodosWeekApi.updateTodoWeek(todoObj.id, {
+                status: newCompleted,
+              });
+            } else {
+              console.warn(
+                "[renderTodo] updateTodoWeek를 호출할 수 없습니다.",
+                todoObj
+              );
+            }
+          } catch (err) {
+            console.error(
+              "[renderTodo] 체크 상태 Firestore 반영 중 오류:",
+              err
+            );
+          }
+        },
+      },
+      [
+        checkbox,
+        createEl(
+          "span",
+          {
+            style: todo.completed
+              ? "text-decoration: line-through; opacity: 0.6;"
+              : "",
+          },
+          [todo.text]
+        ),
+      ]
+    );
+
     ul.appendChild(todoItem);
   });
 };
+
 
 // 이번 주 할 일 진행률 업데이트
 window.updateWeekProgress = function() {
