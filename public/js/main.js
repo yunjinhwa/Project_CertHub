@@ -12,55 +12,60 @@ document.addEventListener("DOMContentLoaded", initPage);
 document.getElementById("searchInput").addEventListener("input", handleAutocomplete);
 document.getElementById("searchButton").addEventListener("click", searchCertificate);
 
+let cachedCertItems = null;
+
 // ===========================================
 // 🔹 활용 분야 불러오기 (20개 추출)
 // ===========================================
-async function loadFieldsBrowse() {
+async function loadFieldsBrowse(sourceItems) {
     const container = document.getElementById("fields-browse");
     container.innerHTML = "<p>불러오는 중...</p>";
 
-    const xmlDoc = await fetchCertificates("");
-    const items = getItemsFromXML(xmlDoc);
+    // initPage에서 넘겨준 items가 있으면 그대로 사용
+    let items = sourceItems;
 
-    // 필요한 데이터만 추출 (중분류와 대분류가 있는 항목만)
+    // 혹시 다른 데서 그냥 loadFieldsBrowse()만 호출했을 때는
+    // 기존처럼 API를 한 번 더 호출하도록 fallback
+    if (!items) {
+        const xmlDoc = await fetchCertificates("");
+        items = getItemsFromXML(xmlDoc);
+    }
+
     const mapped = items
         .map(item => {
             const middle = item.getElementsByTagName("mdobligfldnm")[0]?.textContent.trim() || null;
             const top = item.getElementsByTagName("obligfldnm")[0]?.textContent.trim() || null;
 
-            // 중분류와 대분류가 모두 있을 때만 반환
             if (middle && top) {
                 return {
                     name: item.getElementsByTagName("jmfldnm")[0]?.textContent || "이름 없음",
-                    middle: middle,
-                    top: top
+                    middle,
+                    top
                 };
             }
-            return null;  // 중분류나 대분류가 없으면 null 반환
+            return null;
         })
-        .filter(item => item !== null);  // null을 필터링하여 제외
+        .filter(item => item !== null);
 
-    // 랜덤 20개 추출
     const random20 = mapped
         .map(v => ({ v, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .slice(0, 20)
         .map(o => o.v);
 
-    // HTML 렌더링
     container.innerHTML = random20
-        .map(
-            item => `
+        .map(item => `
             <div class="field-card">
                 <div class="field-card-title">${item.name}</div>
                 <div class="field-card-tags">
                     <span>#${item.middle}</span>
                     <span>#${item.top}</span>
                 </div>
-            </div>`
-        )
+            </div>
+        `)
         .join("");
 }
+
 
 
 
@@ -74,37 +79,39 @@ async function initPage() {
     const resultsDiv_calendar = document.getElementById("results_calendar");
     resultsDiv_calendar.innerHTML = "시험 일정 불러오는 중...";
 
-    const xmlDoc = await fetchCertificates("");
-    let items = getItemsFromXML(xmlDoc);
+    // 1) 자격 목록은 한 번만 불러오고 cachedCertItems에 저장
+    let items;
+    if (cachedCertItems) {
+        items = cachedCertItems;
+    } else {
+        const xmlDoc = await fetchCertificates("");
+        items = getItemsFromXML(xmlDoc);
+        cachedCertItems = items;
+    }
 
     resultsDiv.innerHTML = "";
     resultsDiv_calendar.innerHTML = "";
-    
-    // 전체 랜덤 섞기
+
+    // 2) 랜덤 섞어서 10개 뽑기
     items = items
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
 
-    // 10개 추출
     const randomTen = items.slice(0, 10);
 
-    // 목록 세팅 + 5개 표시
     setAllItems(randomTen);
     loadMoreItems();
-
-    // 스크롤 이벤트 등록
     document.getElementById("scrollContainer").addEventListener("scroll", handleDivScroll);
 
-    // 🔹 시험 일정 출력 실행
-    await loadScheduleToCalendar();
-    await loadTopApplyList();
+    // 3) 나머지 API들은 병렬로 돌려도 되고, 순서 유지 필요 없으면 await 안 해도 됨
+    loadScheduleToCalendar();
+    loadTopApplyList();
 
-    // 🔹 "자세히" 버튼 클릭 이벤트 처리
-    //addDetailButtonClickListeners();
-
-    await loadFieldsBrowse();
+    // 🔹 여기서 바로 위에서 가져온 items 재사용
+    await loadFieldsBrowse(items);
 }
+
 
 // ===========================================
 // 🔹 모달 닫기
