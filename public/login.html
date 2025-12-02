@@ -55,12 +55,13 @@
           <p>계정에 로그인하여 학습을 시작하세요</p>
         </div>
 
-        <form class="login-form" id="loginForm" novalidate>
+        <form data-login-form class="login-form" id="loginForm" novalidate>
           <div class="form-group">
             <label for="email" class="form-label">이메일</label>
             <div class="input-wrapper">
               <input 
                 type="email" 
+                data-login-email
                 id="email" 
                 class="form-input" 
                 placeholder="example@email.com"
@@ -82,6 +83,7 @@
             <div class="input-wrapper">
               <input 
                 type="password" 
+                data-login-password
                 id="password" 
                 class="form-input" 
                 placeholder="비밀번호를 입력하세요"
@@ -116,7 +118,7 @@
             <a href="#" class="link-secondary">비밀번호 찾기</a>
           </div>
 
-          <button type="submit" class="btn-primary">로그인</button>
+          <button type="submit" class="btn-primary" data-login-summit>로그인</button>
 
           <div class="divider">
             <span>또는</span>
@@ -147,7 +149,7 @@
 
           <div class="signup-prompt">
             <span>아직 계정이 없으신가요?</span>
-            <a href="signup.html" class="link-primary">회원가입</a>
+            <a href="test-signup-simple.html" class="link-primary">회원가입</a>
           </div>
         </form>
       </div>
@@ -156,5 +158,6 @@
 
   <script src="js/login/login.js"></script>
   <script src="js/login/password-reset-modal.js"></script>
+  <script type="module" src="js/firebase/firebase-login.js"></script>
 </body>
 </html>

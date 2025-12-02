@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CertHub — 테스트 회원가입</title>
+
+  <!-- 기존 공통 스타일 & 로그인 스타일 재사용 -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <script>
+    // 페이지 뜨기 전에 테마 적용 (기존 방식 그대로)
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.className = savedTheme;
+  </script>
+
+  <div class="login-container">
+    <!-- Left Side: Brand & Message (login.html에서 그대로 재사용) -->
+    <div class="login-left">
+      <div class="login-brand">
+        <div class="brand-logo">
+          <span class="brand-pin">📍</span>
+          <span class="brand-name">CertHub</span>
+        </div>
+        <h1 class="brand-title">자격증 준비의<br>새로운 시작</h1>
+        <p class="brand-subtitle">
+          당신의 목표를 향한 여정,<br />
+          CertHub와 함께 시작하세요.
+        </p>
+        <div class="brand-features">
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>체계적인 학습 관리</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>실시간 시험 일정</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>활발한 커뮤니티</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Signup Form (테스트용 단일 단계) -->
+    <div class="login-right">
+      <a href="login.html" class="btn-back">
+        <span>뒤로</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <polyline points="9 18 15 12 9 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+
+      <div class="login-form-wrapper">
+        <div class="login-header">
+          <h2>테스트 회원가입</h2>
+          <p>Firebase Auth + Firestore 연동이 잘 되는지 테스트용 화면입니다.</p>
+        </div>
+
+        <!-- 🔽 signup.js에서 잡아가는 data-* 속성들 -->
+        <!-- data-signup-form / data-signup-name / data-signup-email / data-signup-password / data-signup-password-confirm -->
+        <form data-signup-form id="signupForm" class="login-form" novalidate>
+          <!-- 이름(닉네임) -->
+          <div class="form-group">
+            <label for="signupName" class="form-label">이름(닉네임)</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="signupName"
+                class="form-input"
+                placeholder="닉네임을 입력하세요"
+                required
+                data-signup-name
+                oninvalid="event.preventDefault();"
+              />
+              <span class="input-icon">
+                <!-- 사람 아이콘 -->
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="7" r="4"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 이메일 -->
+          <div class="form-group">
+            <label for="signupEmail" class="form-label">이메일</label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="signupEmail"
+                class="form-input"
+                placeholder="example@email.com"
+                required
+                data-signup-email
+                oninvalid="event.preventDefault();"
+              />
+              <span class="input-icon">
+                <!-- 이메일 아이콘 -->
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="22,6 12,13 2,6"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 비밀번호 -->
+          <div class="form-group">
+            <label for="signupPassword" class="form-label">비밀번호</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="signupPassword"
+                class="form-input"
+                placeholder="비밀번호를 입력하세요"
+                required
+                minlength="6"
+                data-signup-password
+                oninvalid="event.preventDefault();"
+              />
+              <span class="input-icon">
+                <!-- 자물쇠 아이콘 -->
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 비밀번호 확인 -->
+          <div class="form-group">
+            <label for="signupPasswordConfirm" class="form-label">비밀번호 확인</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="signupPasswordConfirm"
+                class="form-input"
+                placeholder="비밀번호를 다시 입력하세요"
+                required
+                minlength="6"
+                data-signup-password-confirm
+                oninvalid="event.preventDefault();"
+              />
+              <span class="input-icon">
+                <!-- 자물쇠 아이콘 (재사용) -->
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            회원가입 (테스트)
+          </button>
+
+          <div class="signup-prompt">
+            <span>이미 계정이 있으신가요?</span>
+            <a href="login.html" class="link-primary">로그인</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔽 실제 Firebase 회원가입 처리 스크립트 -->
+  <!-- 경로는 네 프로젝트 구조에 맞게 수정해줘! -->
+  <!-- 예) public/js/login/signup.js 를 쓰는 경우: -->
+  <script type="module" src="js/firebase/firebase-signup.js"></script>
+
+  <!-- 만약 파일 이름이 firebase-signup.js 라면 아래처럼 변경
+  <script type="module" src="js/firebase/firebase-signup.js"></script>
+  -->
+</body>
+</html>

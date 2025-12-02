@@ -95,41 +95,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasError) {
       return;
     }
+    
+    //   // Show loading state
+    //   const submitBtn = loginForm.querySelector('.btn-primary');
+    //   const originalText = submitBtn.textContent;
+    //   submitBtn.textContent = '로그인 중...';
+    //   submitBtn.disabled = true;
 
-    // Show loading state
-    const submitBtn = loginForm.querySelector('.btn-primary');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = '로그인 중...';
-    submitBtn.disabled = true;
-
-    try {
-      // TODO: Replace with actual API call
-      await mockLogin(email, password, rememberMe);
+    // try {
+    //   // TODO: Replace with actual API call
+    //   await mockLogin(email, password, rememberMe);
       
-      showNotification('로그인 성공! 페이지를 이동합니다.', 'success');
+    //   showNotification('로그인 성공! 페이지를 이동합니다.', 'success');
       
-      // Redirect to main page after successful login
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
+    //   // Redirect to main page after successful login
+    //   setTimeout(() => {
+    //     window.location.href = 'index.html';
+    //   }, 1500);
 
-    } catch (error) {
-      // 에러 타입에 따른 처리
-      if (error.type === 'EMAIL_NOT_FOUND') {
-        emailInput.classList.add('error');
-        emailError.textContent = error.message;
-        passwordInput.value = ''; // 비밀번호 초기화
-      } else if (error.type === 'WRONG_PASSWORD') {
-        passwordInput.classList.add('error');
-        passwordError.textContent = error.message;
-        passwordInput.value = ''; // 비밀번호 초기화
-        passwordInput.focus();
-      } else {
-        showNotification(error.message || '로그인에 실패했습니다. 다시 시도해주세요.', 'error');
-      }
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
-    }
+    // } catch (error) {
+    //   showNotification(error.message || '로그인에 실패했습니다. 다시 시도해주세요.', 'error');
+    //   submitBtn.textContent = originalText;
+    //   submitBtn.disabled = false;
+    // }
   });
 
   // Social login handlers

@@ -736,5 +736,161 @@
       "context": "search",
       "clickedAt": "2025-11-03T21:00:00Z"
     }
+  ],
+  "certificates": [
+    {
+      "certId": "PVT-2025-000",
+      "name": "SQLD",
+      "field": "데이터",
+      "next": "2025-12-14",
+      "rate": 4.6
+    },
+    {
+      "certId": "PVT-2025-001",
+      "name": "정보처리기사",
+      "field": "IT/개발",
+      "next": "2025-11-23",
+      "rate": 4.7
+    },
+    {
+      "certId": "PVT-2025-002",
+      "name": "리눅스마스터 2급",
+      "field": "IT/인프라",
+      "next": "2026-02-08",
+      "rate": 4.3
+    },
+    {
+      "certId": "PVT-2025-003",
+      "name": "정보보안기사",
+      "field": "보안",
+      "next": "2026-03-15",
+      "rate": 4.6
+    },
+    {
+      "certId": "PVT-2025-004",
+      "name": "네트워크관리사 2급",
+      "field": "IT/인프라",
+      "next": "2026-02-22",
+      "rate": 4.1
+    },
+    {
+      "certId": "PVT-2025-005",
+      "name": "AWS Solutions Architect",
+      "field": "클라우드",
+      "next": "2026-01-15",
+      "rate": 4.8
+    },
+    {
+      "certId": "PVT-2025-006",
+      "name": "빅데이터분석기사",
+      "field": "데이터/AI",
+      "next": "2026-01-10",
+      "rate": 4.8
+    },
+    {
+      "certId": "PVT-2025-007",
+      "name": "전산세무 1급",
+      "field": "회계/재무",
+      "next": "2026-02-20",
+      "rate": 4.5
+    },
+    {
+      "certId": "PVT-2025-008",
+      "name": "ADsP",
+      "field": "데이터",
+      "next": "2026-02-01",
+      "rate": 4.2
+    },
+    {
+      "certId": "PVT-2025-009",
+      "name": "TOEIC Speaking",
+      "field": "어학",
+      "next": "2025-12-10",
+      "rate": 4.4
+    },
+    {
+      "certId": "PVT-2025-010",
+      "name": "컴퓨터활용능력 1급",
+      "field": "사무/IT",
+      "next": "2025-12-21",
+      "rate": 4.3
+    },
+    {
+      "certId": "JMCD_1000",
+      "name": "사무자동화산업기사",
+      "field": "사무/IT",
+      "next": "2026-01-25",
+      "rate": 4.0
+    },
+    {
+      "certId": "JMCD_1001",
+      "name": "전산세무 2급",
+      "field": "회계/재무",
+      "next": "2025-12-07",
+      "rate": 4.4
+    },
+    {
+      "certId": "JMCD_1002",
+      "name": "물류관리사",
+      "field": "유통/물류",
+      "next": "2026-01-18",
+      "rate": 4.2
+    },
+    {
+      "certId": "JMCD_1003",
+      "name": "한국사능력검정시험",
+      "field": "교양",
+      "next": "2025-12-05",
+      "rate": 4.5
+    },
+    {
+      "certId": "JMCD_1004",
+      "name": "GTQ 그래픽기술자격",
+      "field": "디자인",
+      "next": "2026-01-12",
+      "rate": 4.1
+    },
+    {
+      "certId": "JMCD_1005",
+      "name": "워드프로세서",
+      "field": "사무",
+      "next": "2025-12-15",
+      "rate": 4.0
+    },
+    {
+      "certId": "JMCD_1006",
+      "name": "전기기사",
+      "field": "전기/전자",
+      "next": "2026-03-08",
+      "rate": 4.3
+    },
+    {
+      "certId": "JMCD_1007",
+      "name": "건축기사",
+      "field": "건설/안전",
+      "next": "2026-03-22",
+      "rate": 4.4
+    },
+    {
+      "certId": "JMCD_1008",
+      "name": "소방설비기사",
+      "field": "건설/안전",
+      "next": "2026-04-05",
+      "rate": 4.2
+    },
+    {
+      "certId": "JMCD_1009",
+      "name": "위험물산업기사",
+      "field": "안전",
+      "next": "2026-03-15",
+      "rate": 4.1
+    },
+    {
+      "certId": "JMCD_1010",
+      "name": "산업안전기사",
+      "field": "안전",
+      "next": "2026-04-12",
+      "rate": 4.3
+    }
   ]
 }

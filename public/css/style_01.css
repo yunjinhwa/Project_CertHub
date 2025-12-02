@@ -97,6 +97,10 @@ h1 {
 }
 
 /* header 와 footer */
+#header-mypage-link {
+  display: none; /* 기본은 숨겨두고, 로그인되면 JS에서 표시 */
+}
+
 .site-header,
 .site-footer {
     display: flex;
