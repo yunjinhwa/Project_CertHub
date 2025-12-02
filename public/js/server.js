@@ -120,7 +120,8 @@ app.get('/api/attendqual', async (req, res) => {
 
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryAttenQualSVC/getList';
 
-  const query = `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}&pageNo=1&numOfRows=2`;
+  // 전체 자격증 목록을 가져온 후 클라이언트에서 attenJmCd로 필터링
+  const query = `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}&pageNo=1&numOfRows=1000`;
 
   const url = baseUrl + query;
 

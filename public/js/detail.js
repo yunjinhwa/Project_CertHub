@@ -137,9 +137,9 @@ export async function loadDetailInfo(jmcd) {
             }),
         ]);
 
-        // ❌ 느려지는 원인이라서 큰 로그는 제거
-        // console.log("자격증 상세 정보 응답:", detailXmlText);
-        // console.log("추천 자격증 응답:", relatedXmlText);
+        // 🔍 디버깅: XML 응답 구조 확인
+        console.log("=== 관련 자격증 API 응답 (처음 500자) ===");
+        console.log(relatedXmlText.substring(0, 500));
 
         // ---------------------------------------------
         // 상세조회 XML 파싱 → 취득방법 추출
@@ -183,18 +183,49 @@ export async function loadDetailInfo(jmcd) {
 
 
         // ---------------------------------------------
-        // 추천 자격증 XML 파싱
+        // 관련 자격증 XML 파싱
+        // 🔹 API는 전체 목록을 반환하므로, attenJmCd === jmcd 인 항목을 찾아야 함
         // ---------------------------------------------
         const relatedXml = new DOMParser().parseFromString(relatedXmlText, "text/xml");
         const relatedItems = Array.from(relatedXml.getElementsByTagName("item"));
 
-        let recomJmNm1 = "추천자격명 없음";
-        let recomJmNm2 = "추천자격명 없음";
+        console.log(`📊 전체 item 개수: ${relatedItems.length}`);
+        console.log(`🔍 찾는 자격증 코드: ${jmcd}`);
 
-        if (relatedItems.length > 0) {
-            const first = relatedItems[0];
-            recomJmNm1 = first.getElementsByTagName("recomJmNm1")[0]?.textContent || "추천자격명 없음";
-            recomJmNm2 = first.getElementsByTagName("recomJmNm2")[0]?.textContent || "추천자격명 없음";
+        const relatedCerts = [];
+
+        // 전체 item 중에서 attenJmCd가 현재 자격증 코드(jmcd)와 일치하는 것만 찾기
+        const matchedItem = relatedItems.find(item => {
+            const attenJmCd = item.getElementsByTagName("attenJmCd")[0]?.textContent?.trim();
+            return attenJmCd === jmcd;
+        });
+
+        if (matchedItem) {
+            console.log("✅ 일치하는 자격증 발견!");
+            
+            // 일치하는 항목에서 recomJmNm1, recomJmNm2 추출
+            const recomJmNm1 = matchedItem.getElementsByTagName("recomJmNm1")[0]?.textContent?.trim();
+            const recomJmNm2 = matchedItem.getElementsByTagName("recomJmNm2")[0]?.textContent?.trim();
+            
+            if (recomJmNm1) {
+                relatedCerts.push(recomJmNm1);
+                console.log(`  - 추천 1: ${recomJmNm1}`);
+            }
+            if (recomJmNm2) {
+                relatedCerts.push(recomJmNm2);
+                console.log(`  - 추천 2: ${recomJmNm2}`);
+            }
+        } else {
+            console.log("❌ 일치하는 자격증을 찾지 못했습니다.");
+        }
+
+        let relatedCertsHTML = "";
+        if (relatedCerts.length > 0) {
+            relatedCertsHTML = relatedCerts
+                .map(name => `<li>${name}</li>`)
+                .join("");
+        } else {
+            relatedCertsHTML = "<li>관련 자격증 정보가 없습니다.</li>";
         }
 
         // ---------------------------------------------
@@ -206,10 +237,9 @@ export async function loadDetailInfo(jmcd) {
             <h3>📘 취득방법</h3>
             ${acquireInfo || "<p>취득방법 정보가 없습니다.</p>"}
 
-            <h3>📘 추천 자격증</h3>
+            <h3>📘 관련 자격증</h3>
             <ul>
-                <li>${recomJmNm1}</li>
-                <li>${recomJmNm2}</li>
+                ${relatedCertsHTML}
             </ul>
         `;
 
