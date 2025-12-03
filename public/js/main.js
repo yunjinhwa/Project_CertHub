@@ -9,6 +9,18 @@ import { loadDetailInfo, closeModal } from "./detail.js";
 
 document.addEventListener("DOMContentLoaded", initPage);
 document.getElementById("searchInput").addEventListener("input", handleAutocomplete);
+document.getElementById("searchInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault(); // 기본 제출 방지
+        const box = document.getElementById("autocomplete");
+        if (box) {
+            box.style.display = "none";   // 숨기기
+            box.innerHTML = "";           // 내용 비우기
+        }
+        searchCertificate(); // 검색 실행
+    }
+});
+
 document.getElementById("searchButton").addEventListener("click", () => {
     const box = document.getElementById("autocomplete");
     if (box) box.style.display = "none"; // 자동완성 박스 닫기
