@@ -3,9 +3,14 @@
 import { fetchCertificates, getItemsFromXML } from "./api.js";
 import { renderListItem } from "./render.js";
 
-export async function searchCertificate() {
-    const input = document.getElementById("searchInput").value.trim();
+export async function searchCertificate(keyword) {
+    const input = keyword || document.getElementById("searchInput").value.trim();
     const resultsDiv = document.getElementById("results");
+
+    const box = document.getElementById("autocomplete");
+    if (box) {
+        box.style.display = "none";
+    }
 
     // 🔹 검색어가 비어 있으면 → 랜덤 10개 다시 보여주기
     if (!input) {
@@ -45,11 +50,11 @@ export async function searchCertificate() {
     const normalize = (str) =>
         str?.normalize("NFC").replace(/\s+/g, "").trim().toLowerCase() || "";
 
-    const keyword = normalize(input);
+    const keywordNormalized = normalize(input);
 
     const matched = items.filter(item => {
         const name = item.getElementsByTagName("jmfldnm")[0]?.textContent || "";
-        return normalize(name).includes(keyword);
+        return normalize(name).includes(keywordNormalized);
     });
 
     if (matched.length === 0) {

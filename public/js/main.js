@@ -8,9 +8,13 @@ import { renderScheduleList, renderExamStatsList } from "./render.js";
 import { loadDetailInfo, closeModal } from "./detail.js";
 
 document.addEventListener("DOMContentLoaded", initPage);
-
 document.getElementById("searchInput").addEventListener("input", handleAutocomplete);
-document.getElementById("searchButton").addEventListener("click", searchCertificate);
+document.getElementById("searchButton").addEventListener("click", () => {
+    const box = document.getElementById("autocomplete");
+    if (box) box.style.display = "none"; // 자동완성 박스 닫기
+    searchCertificate(); // 검색 실행
+});
+
 
 let cachedCertItems = null;
 

@@ -69,9 +69,10 @@ export async function handleAutocomplete() {
 
         // 자동완성 항목 클릭 시 실행
         div.onclick = () => {
-            document.getElementById("searchInput").value = name;
+            const selectedName = normalize(name);
+            document.getElementById("searchInput").value = selectedName;
             box.style.display = "none";
-            searchCertificate();
+            searchCertificate(selectedName); // ← 검색 함수에 직접 전달
         };
 
         box.appendChild(div);
