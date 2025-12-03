@@ -112,7 +112,9 @@ window.showEditProfileModal = function() {
         reader.onload = (event) => {
           currentAvatar = event.target.result;
           currentAvatarType = "image";
-          updateAvatarDisplay();
+          //updateAvatarDisplay();
+          //파이어베이스 스토리지는 유료이다.
+          console.log("추후 지원 예정입니다");
         };
         reader.readAsDataURL(file);
       }
@@ -193,6 +195,28 @@ window.showEditProfileModal = function() {
       ])
     ])
   ]);
+  
+    // 아바타 영역을 다시 그려주는 함수
+  // const updateAvatarDisplay = () => {
+  //   // 아바타 DOM 비우기
+  //   avatarElement.innerHTML = "";
+
+  //   // 타입에 따라 이미지 / 이모지 표시
+  //   if (currentAvatarType === "image" && currentAvatar) {
+  //     const img = createEl("img", {
+  //       src: currentAvatar,
+  //       alt: "프로필 사진",
+  //     });
+  //     avatarElement.appendChild(img);
+  //   } else {
+  //     // 이미지가 아니면 이모지(또는 기본값) 표시
+  //     avatarElement.textContent = currentAvatar || DEFAULT_AVATAR;
+  //   }
+
+  //   // 아바타가 바뀌면 저장 버튼 상태도 다시 체크
+  //   updateSaveButton();
+  // };
+
 
   // 스크롤바 너비 계산 및 배경 스크롤 막기
   const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
