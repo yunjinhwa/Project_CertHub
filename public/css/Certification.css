@@ -1,0 +1,117 @@
+/* ==========================================================================
+   Certification Type Pages Specific Styles
+   ========================================================================== */
+
+/* ============ Layout ============ */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--fg);
+}
+
+.page-header .breadcrumb {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.page-header .breadcrumb a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.page-header .breadcrumb a:hover {
+    color: var(--primary);
+}
+
+/* ============ Certification List ============ */
+.cert-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.cert-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .4);
+}
+
+.cert-card-header {
+    margin-bottom: 16px;
+}
+
+.cert-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0 0 8px;
+}
+
+.cert-agency {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.cert-card-body {
+    flex-grow: 1;
+    margin-bottom: 16px;
+}
+
+.cert-summary {
+    font-size: 14px;
+    color: var(--fg);
+    line-height: 1.6;
+}
+
+.cert-card-footer {
+    margin-top: auto;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 28px;
+    }
+
+    .cert-list-container {
+        grid-template-columns: 1fr;
+    }
+}
