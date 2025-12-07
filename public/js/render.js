@@ -33,21 +33,17 @@ export function renderListItem(item, container) {
                     <span>#${obligfldnm}/${mdobligfldnm}</span>
                 </div>
             </div>
-            <button class="detail-btn" data-jmcd="${jmcd}" 
-                style="padding:6px 12px; border-radius:6px; cursor:pointer;">
-                자세히
-            </button>
-            <button class="schedule-btn" data-jmcd="${jmcd}"
-                style="padding:6px 12px; border-radius:6px; cursor:pointer;">
-                시험일정
-            </button>
+            <div class="list-item-buttons">
+                <button class="btn detail-btn" data-jmcd="${jmcd}">자세히</button>
+                <button class="btn schedule-btn" data-jmcd="${jmcd}">시험일정</button>
+            </div>
         </div>
         <hr>
     `;
 
     container.appendChild(div);
     div.querySelector(".detail-btn").addEventListener("click", () => loadDetailInfo(jmcd));
-    div.querySelector(".schedule-btn").addEventListener("click", async () => {await window.loadScheduleToCalendar(jmcd, jmfldnm);});
+    div.querySelector(".schedule-btn").addEventListener("click", () => {window.loadScheduleToCalendar(jmcd, jmfldnm);});
 
     // // “자세히” 버튼 클릭 → loadDetailInfo(jmcd) - 자격증 상세조회 API로 이동해 모달을 띄움
     // const btn = div.querySelector(".detail-btn");
@@ -176,4 +172,3 @@ export function renderExamStatsList(items, container) {
         container.appendChild(div);
     });
 }
-
