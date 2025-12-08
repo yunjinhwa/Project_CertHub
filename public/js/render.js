@@ -12,19 +12,16 @@ import { fetchCertificates, fetchSchedule, getItemsFromXML } from "./api.js";
 
 // 1) 자격증 목록 렌더링 기능 (renderListItem) --> 검색창에서 자격증을 검색했을 때, “자격증 정보 + 자세히 버튼” 형태의 리스트를 만드는 함수
 export function renderListItem(item, container) {
-    // XML에서 필요한 정보 추출 - 자격증 이름, 등급(기능사/기사), 산업분류 등 정보를 읽어옴
     const jmfldnm = item.getElementsByTagName('jmfldnm')[0]?.textContent || '없음';
     const qualgbnm = item.getElementsByTagName('qualgbnm')[0]?.textContent || '없음';
     const seriesnm = item.getElementsByTagName('seriesnm')[0]?.textContent || '없음';
     const obligfldnm = item.getElementsByTagName('obligfldnm')[0]?.textContent || '없음';
     const mdobligfldnm = item.getElementsByTagName('mdobligfldnm')[0]?.textContent || '없음';
-    const jmcd = item.getElementsByTagName('jmcd')[0]?.textContent || ''; // 상세조회 API에 필요
+    const jmcd = item.getElementsByTagName('jmcd')[0]?.textContent || '';
 
-    // 자격증 하나당 하나의 리스트 아이템 생성
     const div = document.createElement("div");
     div.className = "list-item";
 
-    // UI 구성: 자격증 이름 + 태그 + 자세히 버튼
     div.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
@@ -35,32 +32,42 @@ export function renderListItem(item, container) {
                     <span>#${obligfldnm}/${mdobligfldnm}</span>
                 </div>
             </div>
+
             <div class="list-item-buttons">
                 <button class="btn detail-btn" data-jmcd="${jmcd}">자세히</button>
-                <button class="btn schedule-btn" data-jmcd="${jmcd}">시험일정</button>
+
+                <button 
+                    class="btn schedule-btn" 
+                    data-jmcd="${jmcd}" 
+                    data-grade="${seriesnm}"
+                    data-name="${jmfldnm}"
+                >
+                    시험일정
+                </button>
             </div>
         </div>
         <hr>
     `;
 
     container.appendChild(div);
-    div.querySelector(".detail-btn").addEventListener("click", () => loadDetailInfo(jmcd));
-    div.querySelector(".schedule-btn").addEventListener("click", () => {
-    loadScheduleByName(jmfldnm); 
-});
 
+    div.querySelector(".detail-btn")
+        .addEventListener("click", () => loadDetailInfo(jmcd));
 
-    // // “자세히” 버튼 클릭 → loadDetailInfo(jmcd) - 자격증 상세조회 API로 이동해 모달을 띄움
-    // const btn = div.querySelector(".detail-btn");
-    // btn.addEventListener("click", () => loadDetailInfo(jmcd));
+    div.querySelector(".schedule-btn")
+        .addEventListener("click", (e) => {
+            const btn = e.target;
+            window.loadScheduleToCalendar(
+                btn.dataset.jmcd,
+                btn.dataset.name,
+                btn.dataset.grade  // 🔥 이제 "기사", "산업기사", "기능사", "기술사"가 정확하게 들어감
+            );
+        });
 }
 
 // ================================================================================================================================== //
-
 // 시험 일정 렌더링(renderScheduleList) - 시험 일정 API(XML) 데이터를 화면에 보기 좋게 정리해서 보여주는 기능
 // ================================================================================================================================== //
-
-// 시험 일정 렌더링(renderScheduleList) - getPEList 응답(전부 소문자 태그)에 맞게 렌더링
 export function renderScheduleList(items, container) {
     container.innerHTML = "";
 
