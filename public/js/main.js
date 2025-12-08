@@ -5,6 +5,7 @@ import { handleAutocomplete } from "./autocomplete.js";
 import { searchCertificate } from "./search.js";
 import { setAllItems, loadMoreItems, handleDivScroll } from "./pagination.js";
 import { renderScheduleList, renderExamStatsList } from "./render.js";
+import { TrendingCarousel } from "./trending-carousel.js";
 import { loadDetailInfo, closeModal } from "./detail.js";
 
 document.addEventListener("DOMContentLoaded", initPage);
@@ -202,8 +203,10 @@ async function loadTopApplyList() {
     const xmlDoc = await fetchExamStats("10", "2023");
     const items = getItemsFromXML(xmlDoc);
 
-    document.getElementById("scrollContainer-trending").addEventListener("scroll", handleDivScroll);
     // 👇 데이터 파싱 + 정렬 + 렌더링 전부 renderExamStatsList에서 처리
     renderExamStatsList(items, container);
+    
+    // 캐러셀 초기화
+    new TrendingCarousel("#certlist-trending");
 }
 

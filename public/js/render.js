@@ -166,24 +166,41 @@ export function renderExamStatsList(items, container) {
         return;
     }
 
-    // Top10만 가져오기
+    // Top10만 가져오기 - 각 항목을 독립된 div로 생성
     dataList.slice(0, 10).forEach(item => {
-        const div = document.createElement("div");
-        div.className = "exam-stat-card";
+        const card = document.createElement("div");
+        card.className = "exam-stat-card";
 
-        div.innerHTML = `
-            <h3>${item.name}</h3>
-
-            <p>🧾 응시자격: ${item.qualDisp}</p>
-            <p>📅 시행년도: ${item.implYy}</p>
-            <p>🔢 회차: ${item.implSeq}</p>
-
-            <p>📝 접수자 수: <strong>${item.apply.toLocaleString()}</strong> 명</p>
-            <p>✏️ 필기 합격: ${item.pilPass.toLocaleString()} 명</p>
-            <p>🛠 실기 합격: ${item.silPass.toLocaleString()} 명</p>
+        card.innerHTML = `
+            <div class="stat-card-header">
+                <h3 class="stat-card-title">${item.name}</h3>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-row">
+                    <span class="stat-label">📅 시행년도</span>
+                    <span class="stat-value">${item.implYy}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🔢 회차</span>
+                    <span class="stat-value">${item.implSeq}회</span>
+                </div>
+                <div class="stat-row highlight">
+                    <span class="stat-label">📝 접수자</span>
+                    <span class="stat-value-primary">${item.apply.toLocaleString()} 명</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-row">
+                    <span class="stat-label">✏️ 필기 합격</span>
+                    <span class="stat-value">${item.pilPass.toLocaleString()} 명</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🛠️ 실기 합격</span>
+                    <span class="stat-value">${item.silPass.toLocaleString()} 명</span>
+                </div>
+            </div>
         `;
 
-        container.appendChild(div);
+        container.appendChild(card);
     });
 }
 

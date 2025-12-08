@@ -465,11 +465,164 @@ a:hover {
    4. 자격증 시험 일정
 ====================================== */
 #scrollContainer-calendar,
-#scrollContainer-trending,
 #scrollContainer {
-    max-height: 360px;  /* 원하는 크기로 조절 */
+    max-height: 360px;
     overflow-y: auto;
     padding-right: 10px;
+}
+
+/* ======================================
+   5. 자격 정보 현황 캐러셀
+====================================== */
+#scrollContainer-trending {
+    position: relative;
+    overflow: visible;
+    max-height: 340px;
+    width: 100%;
+}
+
+#certlist-trending {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.trending-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.trending-carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+}
+
+.trending-carousel-slide {
+    min-width: 100%;
+    max-width: 100%;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.trending-carousel-slide.active {
+    opacity: 1;
+}
+
+.trending-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: none;
+    background: var(--border);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot:hover {
+    background: var(--muted);
+}
+
+.carousel-dot.active {
+    background: var(--primary);
+    width: 20px;
+    border-radius: 3px;
+}
+
+/* 자격 정보 카드 디자인 */
+.exam-stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    max-width: 100%;
+    min-height: 340px;
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0;
+}
+
+.stat-card-grade {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--overlay);
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+.stat-card-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 20px;
+    flex: 1;
+}
+
+.stat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-row.highlight {
+    grid-column: 1 / -1;
+    background: var(--overlay);
+    padding: 14px;
+    border-radius: 8px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 16px;
+    color: var(--fg);
+    font-weight: 600;
+}
+
+.stat-value-primary {
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.stat-divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
 }
 
 
@@ -481,6 +634,8 @@ a:hover {
     display: grid;
     grid-template-columns: repeat(2, 1fr);  /* 한 줄에 2개씩 배치 */
     gap: 16px;  /* 카드 간의 간격 */
+    max-height: 340px;
+    overflow-y: auto;
 }
 
 /* 개별 카드 스타일 */
@@ -517,23 +672,22 @@ a:hover {
 /* 전체 컨테이너: Flexbox로 배치 */
 #three-sections-wrapper {
     display: flex;
-    justify-content: space-between;  /* 왼쪽과 오른쪽 섹션 사이 공간을 넓힘 */
-    gap: 24px;  /* 각 섹션 간 간격 */
+    gap: 24px;
+    align-items: flex-start;
 }
 
-/* 왼쪽 영역: 자격증 + 커뮤니티 글 */
-#left-sections {
-    display: block;
-    flex-direction: column;  /* 위아래로 배치 */
-    gap: 24px;  /* 각 섹션 간 간격 */
-    flex: 2;  /* 왼쪽 섹션이 오른쪽보다 더 많이 차지하도록 설정 */
+/* 자격 정보 현황: 2/3 너비 */
+#trending-certs-section {
+    flex: 0 0 calc(66.666% - 12px);
+    max-width: calc(66.666% - 12px);
+    min-width: 0;
 }
 
-/* 오른쪽 영역: 활용 분야 */
+/* 활용 분야: 1/3 너비 */
 #fields-section {
-    display: block;
-    flex: 1;  /* 오른쪽 섹션은 남은 공간을 차지 */
-    min-width: 300px;  /* 최소 너비 설정 */
+    flex: 0 0 calc(33.333% - 12px);
+    max-width: calc(33.333% - 12px);
+    min-width: 0;
 }
 
 /* 각 섹션 제목 스타일 */
