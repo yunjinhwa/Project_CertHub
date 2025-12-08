@@ -78,25 +78,22 @@ app.get('/api/cert/detail', async (req, res) => {
 
 // =============================================== 시험 일정 API ===============================================
 app.get('/api/schedule', async (req, res) => {
-  const jmCd = req.query.jmcd;   // 종목코드
-  let year = req.query.implYy;   // 연도 (옵션)
+  const jmCd = req.query.jmcd;
+  let year = req.query.implYy;
 
   if (!jmCd) return res.status(400).send("jmcd parameter is required.");
 
-    // ⭐ year가 비어있다면 올해 기준 (예: new Date().getFullYear())
   if (!year || year.trim() === "") {
     year = String(new Date().getFullYear());
   }
 
-  const baseUrl =
-    'https://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList';
+  const baseUrl = "http://openapi.q-net.or.kr/api/service/rest/InquiryTestInformationNTQSVC/getPEList";
 
-  let query =
+  const query =
     `?serviceKey=${encodeURIComponent(serviceKey)}` +
-    `&dataFormat=xml` +                     // ✔ 반드시 포함
-    `&jmCd=${encodeURIComponent(jmCd)}` +   // ✔ 필수
-    `&implYy=${encodeURIComponent(year)}` + // ✔ 필수
-    `&pageNo=1&numOfRows=10`; 
+    `&jmCd=${encodeURIComponent(jmCd)}` +
+    `&implYy=${encodeURIComponent(year)}` +
+    `&pageNo=1&numOfRows=100`;
 
   const url = baseUrl + query;
 
@@ -104,13 +101,14 @@ app.get('/api/schedule', async (req, res) => {
     const response = await fetch(url);
     const xmlText = await response.text();
 
-    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
     console.error("시험 일정 조회 오류:", error);
     res.status(500).send("서버 오류: " + error.message);
   }
 });
+
 
 // =============================================== 관련 자격 API ===============================================
 app.get('/api/attendqual', async (req, res) => {

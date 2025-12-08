@@ -82,58 +82,76 @@ async function loadFieldsBrowse(sourceItems) {
         .join("");
 }
 
+// 🔥 전역 캐시
+let ALL_CERT_ITEMS = [];
 
 
+// ================================
+// 🔥 전체 자격 초기 1회 로딩 함수
+// ================================
+async function initCertificates() {
+    console.log("🔄 전체 자격 목록 로딩 중...");
 
-// ===========================================
-// 🔹 페이지 초기 실행
-// ===========================================
+    // ⚠️ name="" 은 데이터 0개! → "a"로 우회해야 전체가 나옴
+    const xmlDoc = await fetchCertificates("a");
+    ALL_CERT_ITEMS = getItemsFromXML(xmlDoc);
+
+    console.log("📌 전체 자격 개수:", ALL_CERT_ITEMS.length);
+}
+
+
+// ================================
+// 🔥 페이지 초기 실행
+// ================================
 async function initPage() {
     const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "전체 자격증 불러오는 중...";
-
     const resultsDiv_calendar = document.getElementById("results_calendar");
+
+    resultsDiv.innerHTML = "전체 자격증 불러오는 중...";
     resultsDiv_calendar.innerHTML = "시험 일정 불러오는 중...";
 
-    // 1) 자격 목록은 한 번만 불러오고 cachedCertItems에 저장
-    let items;
-    if (cachedCertItems) {
-        items = cachedCertItems;
-    } else {
-        const xmlDoc = await fetchCertificates("");
-        items = getItemsFromXML(xmlDoc);
-        cachedCertItems = items;
+    // 🔥 1) 전체 자격 목록 최초 로딩
+    if (ALL_CERT_ITEMS.length === 0) {
+        await initCertificates();
     }
+
+    // 🔥 2) 캐싱된 전체 목록 가져오기
+    let items = ALL_CERT_ITEMS;
 
     resultsDiv.innerHTML = "";
     resultsDiv_calendar.innerHTML = "";
 
-    // 2) 랜덤 섞어서 10개 뽑기
-    items = items
-        .map((value) => ({ value, sort: Math.random() }))
+    // 🔥 3) 랜덤 10개 선택
+    const randomTen = items
+        .map(v => ({ v, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value);
-
-    const randomTen = items.slice(0, 10);
+        .slice(0, 10)
+        .map(o => o.v);
 
     setAllItems(randomTen);
     loadMoreItems();
-    document.getElementById("scrollContainer").addEventListener("scroll", handleDivScroll);
+    document.getElementById("scrollContainer")
+        .addEventListener("scroll", handleDivScroll);
 
-    
+
+    // 🔥 4) 첫 번째 자격증 일정 바로 보여주기
     const firstItem = randomTen[0];
+    if (!firstItem) {
+        console.error("❗ firstItem이 undefined입니다.");
+        return;
+    }
+
     const firstJmcd = firstItem.getElementsByTagName("jmcd")[0]?.textContent;
     const firstName = firstItem.getElementsByTagName("jmfldnm")[0]?.textContent;
 
     loadScheduleToCalendar(firstJmcd, firstName);
 
-    // 3) 나머지 API들은 병렬로 돌려도 되고, 순서 유지 필요 없으면 await 안 해도 됨
-    //loadScheduleToCalendar();
-    loadTopApplyList();
 
-    // 🔹 여기서 바로 위에서 가져온 items 재사용
+    // 🔥 5) TOP 리스트 / 활용분야 / 기타 불러오기
+    loadTopApplyList();
     await loadFieldsBrowse(items);
 }
+
 
 
 // ===========================================
