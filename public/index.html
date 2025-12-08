@@ -110,7 +110,6 @@
             </div>
             <script type="module" src="js/main.js"></script>
             <script type="module" src="js/firebase/firebase-auth-state.js"></script>
-            <script src="js/modal.js"></script>
             <script src="js/theme.js"></script>
         </main>
     </section>
@@ -121,13 +120,19 @@
     </footer>
 
     <!-- ======================= Modal ======================= -->
-    <div id="detailModal" class="modal-overlay">
-        <div class="modal-content">
+    <div id="detailModal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+            <h3 id="modalTitle">자격 상세 정보</h3>
             <button id="modalCloseBtn">✕</button>
-            <div id="modalBody">불러오는 중...</div>
+            </div>
+            <div id="modalBody" class="modal-body">
+            불러오는 중...
+            </div>
         </div>
     </div>
 
+    <script src="js/modal.js"></script>
 </body>
 
 </html>
