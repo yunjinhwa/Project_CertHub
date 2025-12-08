@@ -20,16 +20,20 @@ export function getItemsFromXML(xmlDoc) {
 }
 
 // 시험 일정 
-export async function fetchSchedule(jmCd = "", year = "") {
-    let url = `/api/schedule?jmcd=${encodeURIComponent(jmCd)}`;
-    if (year) url += `&year=${encodeURIComponent(year)}`;
+export async function fetchSchedule(jmcd = "", year = new Date().getFullYear()) {
+    const url =
+        jmcd && jmcd !== ""
+        ? `/api/schedule?jmcd=${jmcd}&implYy=${year}`
+        : `/api/schedule`;   // 🔥 jmcd 없이 전체 일정 조회
 
-    const res = await fetch(url);
-    const xmlText = await res.text();
+    console.log("📡 호출 URL:", url);  // ← URL이 여기에 찍힘
 
-    const parser = new DOMParser();
-    return parser.parseFromString(xmlText, "text/xml");
+    const response = await fetch(url);
+    const xmlText = await response.text();
+
+    return new window.DOMParser().parseFromString(xmlText, "text/xml");
 }
+
 
 // 응시자격별 통계 데이터
 export async function fetchExamStats(grdCd = '10', year = '2023') {
