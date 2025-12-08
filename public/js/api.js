@@ -16,19 +16,54 @@ export async function fetchCertificates(keyword = "") {
 }
 
 export function getItemsFromXML(xmlDoc) {
-    return Array.from(xmlDoc.getElementsByTagName("item"));
+    // 🔥 1) 파싱 에러 확인
+    const parserError = xmlDoc.getElementsByTagName("parsererror");
+    if (parserError.length > 0) {
+        console.error("XML 파싱 오류 발생:", parserError[0].textContent);
+        return [];
+    }
+
+    // 🔥 2) 기본 item 검색
+    let items = xmlDoc.getElementsByTagName("item");
+
+    if (items.length > 0) {
+        return Array.from(items);
+    }
+
+    // 🔥 3) items 태그 아래에 list로 돼있는 경우
+    items = xmlDoc.getElementsByTagName("list");
+    if (items.length > 0) {
+        return Array.from(items);
+    }
+
+    // 🔥 4) 최후 fallback: body -> items -> children
+    const fallbackItems = xmlDoc.querySelectorAll("items > *");
+    if (fallbackItems.length > 0) {
+        return Array.from(fallbackItems);
+    }
+
+    console.warn("⚠ XML에서 item을 찾지 못했습니다.");
+    return [];
 }
 
+
 // 시험 일정 
-export async function fetchSchedule(jmCd = "", year = "") {
-    let url = `/api/schedule?jmcd=${encodeURIComponent(jmCd)}`;
-    if (year) url += `&year=${encodeURIComponent(year)}`;
+export async function fetchSchedule(jmcd, grade, year = new Date().getFullYear()) {
+    const url = `/api/schedule?jmcd=${jmcd}&grade=${grade}&implYy=${year}`;
 
-    const res = await fetch(url);
-    const xmlText = await res.text();
+    const response = await fetch(url);
+    const xmlText = await response.text();
 
-    const parser = new DOMParser();
-    return parser.parseFromString(xmlText, "text/xml");
+    let parser = new DOMParser();
+    let xml = parser.parseFromString(xmlText, "application/xml");
+
+    // 혹시 XML 파싱 오류가 있으면 fallback으로 text/xml 한번 더 시도
+    if (xml.getElementsByTagName("parsererror").length > 0) {
+        xml = parser.parseFromString(xmlText, "text/xml");
+    }
+
+    return xml;
+
 }
 
 // 응시자격별 통계 데이터

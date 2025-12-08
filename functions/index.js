@@ -7,32 +7,38 @@ const app = express();
 app.use(cors());
 
 // ===============================================
-// 자격증 목록 API
+// 📘 자격증 목록 API  (검색 + 전체목록 모두 지원)
 // ===============================================
 app.get("/api/cert", async (req, res) => {
-  const certName = req.query.name || "";
-  const serviceKey = "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
+  const certName = req.query.name?.trim() || "";
+  const serviceKey =
+    "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
 
   const baseUrl =
     "http://openapi.q-net.or.kr/api/service/rest/InquiryListNationalQualifcationSVC/getList";
 
-  const query =
-    `?serviceKey=${serviceKey}` +
-    `&jmNm=${encodeURIComponent(certName)}` +
-    `&pageNo=1&numOfRows=100`;
+  // 🔥 핵심: 검색어가 있을 때만 jmNm 추가
+  let query = `?serviceKey=${serviceKey}&pageNo=1&numOfRows=999`;
+
+  // ✔ 검색어가 있을 때만 jmNm 추가
+  if (certName && certName.trim() !== "") {
+    query += `&jmNm=${encodeURIComponent(certName)}`;
+  }
 
   try {
     const response = await fetch(baseUrl + query);
     const xmlText = await response.text();
+
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
+
   } catch (error) {
     res.status(500).send("서버 오류: " + error.message);
   }
 });
 
 // ===============================================
-// 자격 상세 조회 API
+// 📘 자격 상세 조회 API
 // ===============================================
 app.get("/api/cert/detail", async (req, res) => {
   const jmCd = req.query.jmcd;
@@ -49,51 +55,63 @@ app.get("/api/cert/detail", async (req, res) => {
   try {
     const response = await fetch(baseUrl + query);
     const xmlText = await response.text();
+
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
+    console.error("상세 조회 오류:", error);
     res.status(500).send("서버 오류: " + error.message);
   }
 });
 
 // ===============================================
-// 시험 일정 API
+// 📘 시험 일정 API (getPEList)
 // ===============================================
 app.get("/api/schedule", async (req, res) => {
-  const jmCd = req.query.jmcd;
-  let year = req.query.year || req.query.implYy;
+  const jmCd = req.query.jmcd || null;
+  let year = req.query.implYy;
 
-  if (!jmCd) return res.status(400).send("jmcd parameter is required.");
-  if (!year || year.trim() === "") year = String(new Date().getFullYear());
+  if (!year || year.trim() === "") {
+    year = String(new Date().getFullYear());
+  }
 
   const serviceKey =
     "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
 
   const baseUrl =
-    "https://apis.data.go.kr/B490007/qualExamSchd/getQualExamSchdList";
+    "http://openapi.q-net.or.kr/api/service/rest/InquiryTestInformationNTQSVC/getPEList";
 
-  const query =
-    `?serviceKey=${encodeURIComponent(serviceKey)}` +
-    `&dataFormat=xml` +
-    `&jmCd=${encodeURIComponent(jmCd)}` +
-    `&implYy=${encodeURIComponent(year)}` +
-    `&pageNo=1&numOfRows=20`;
+  let query = `?serviceKey=${encodeURIComponent(serviceKey)}`;
+
+  // ⭐ 특정 종목 일정 조회
+  if (jmCd) {
+    query += `&jmCd=${encodeURIComponent(jmCd)}`;
+    query += `&implYy=${encodeURIComponent(year)}`;
+  }
+
+  // ⭐ 전체 일정 조회
+  query += "&pageNo=1&numOfRows=200";
+
+  const url = baseUrl + query;
 
   try {
-    const response = await fetch(baseUrl + query);
+    const response = await fetch(url);
     const xmlText = await response.text();
+
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
+    console.error("시험 일정 조회 오류:", error);
     res.status(500).send("서버 오류: " + error.message);
   }
 });
+
 // ===============================================
-// 응시자격별 원서접수 및 합격 현황 조회 API (TOP 응시자수 데이터)
+// 📘 응시자격별 접수/합격 통계 API
 // ===============================================
 app.get("/api/exam/stats", async (req, res) => {
-  const grdCd = req.query.grdCd || "10";     // 기능사 기본값
-  const baseYY = req.query.baseYY || "2023"; // 연도 기본값
+  const grdCd = req.query.grdCd || "10";
+  const baseYY = req.query.baseYY || "2023";
 
   const serviceKey =
     "6392230c571116074d2e799a1309a9e8ac656fc32deebd7be9f12b12328518fd";
@@ -111,6 +129,7 @@ app.get("/api/exam/stats", async (req, res) => {
   try {
     const response = await fetch(baseUrl + query);
     const xmlText = await response.text();
+
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
@@ -120,7 +139,7 @@ app.get("/api/exam/stats", async (req, res) => {
 });
 
 // ===============================================
-// 관련 자격증 조회 API 추가
+// 📘 관련 자격증 조회 API
 // ===============================================
 app.get("/api/attendqual", async (req, res) => {
   const jmCd = req.query.jmcd;
@@ -134,11 +153,12 @@ app.get("/api/attendqual", async (req, res) => {
     "http://openapi.q-net.or.kr/api/service/rest/InquiryAttenQualSVC/getList";
 
   const query =
-    `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}&pageNo=1&numOfRows=1000`; // 전체 자격증 목록 가져오기 (클라이언트에서 attenJmCd로 필터링)
+    `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}&pageNo=1&numOfRows=1000`;
 
   try {
     const response = await fetch(baseUrl + query);
     const xmlText = await response.text();
+
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.send(xmlText);
   } catch (error) {
@@ -150,5 +170,4 @@ app.get("/api/attendqual", async (req, res) => {
 // ===============================================
 // Firebase Functions로 Export
 // ===============================================
-
 exports.api = functions.https.onRequest(app);
