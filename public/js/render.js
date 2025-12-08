@@ -44,10 +44,21 @@ export function renderListItem(item, container) {
     `;
 
     container.appendChild(div);
-    div.querySelector(".detail-btn").addEventListener("click", () => loadDetailInfo(jmcd));
+    
+    // "자세히" 버튼 클릭 시 자격증 정보를 함께 전달
+    div.querySelector(".detail-btn").addEventListener("click", () => {
+        loadDetailInfo(jmcd, {
+            name: jmfldnm,
+            grade: qualgbnm,
+            series: seriesnm,
+            field1: obligfldnm,
+            field2: mdobligfldnm
+        });
+    });
+    
     div.querySelector(".schedule-btn").addEventListener("click", () => {
-    loadScheduleByName(jmfldnm); 
-});
+        loadScheduleByName(jmfldnm); 
+    });
 
 
     // // “자세히” 버튼 클릭 → loadDetailInfo(jmcd) - 자격증 상세조회 API로 이동해 모달을 띄움
