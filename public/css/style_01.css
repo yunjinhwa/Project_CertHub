@@ -354,14 +354,18 @@ a:hover {
 }
 
 /*모달 부분*/
+.hidden {
+  display: none !important;
+}
+
 .modal-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  display: flex;          /* 🔹 항상 flex로 두고 */
   justify-content: center;
   align-items: center;
   z-index: 999;
@@ -378,6 +382,7 @@ a:hover {
   position: relative;
 }
 
+/* 닫기 버튼 위치 */
 #modalCloseBtn {
   position: absolute;
   top: 10px;

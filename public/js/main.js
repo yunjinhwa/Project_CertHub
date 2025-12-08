@@ -170,9 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
 
     const jmcd = btn.getAttribute("data-jmcd");
+    const name = btn.getAttribute("data-name") || "";   // 🔹 자격증 이름 읽기
     if (!jmcd) return;
 
-    // 새 모달 기반 상세 정보 로더 호출
-    loadDetailInfo(jmcd);
+    // 🔹 자격증 이름까지 같이 전달
+    loadDetailInfo(jmcd, name);
   });
 });

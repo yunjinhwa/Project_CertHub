@@ -54,6 +54,25 @@ export async function addBookmark({ certId, certName }) {
 
   const user = await waitForAuthUser();
 
+  // 🔹 1) 같은 uid + certId가 이미 있는지 먼저 조회
+  const q = query(
+    collection(db, "bookmarks"),
+    where("uid", "==", user.uid),
+    where("certId", "==", certId)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (!snapshot.empty) {
+    // 이미 북마크가 있을 때 → 새로 만들지 않고 기존 문서 ID만 반환
+    const existing = snapshot.docs[0];
+    console.log(
+      `이미 존재하는 북마크 (uid=${user.uid}, certId=${certId}) → ${existing.id}`
+    );
+    return existing.id;
+  }
+
+  // 🔹 2) 없을 때만 새 문서 생성
   const ref = await addDoc(collection(db, "bookmarks"), {
     uid: user.uid,
     certId,
@@ -64,6 +83,7 @@ export async function addBookmark({ certId, certName }) {
   console.log("bookmarks 문서 생성 완료:", ref.id);
   return ref.id;
 }
+
 
 /**
  * 🔹 READ: 현재 로그인한 사용자의 북마크 목록 조회
