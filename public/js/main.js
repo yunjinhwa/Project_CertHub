@@ -143,8 +143,9 @@ async function initPage() {
 
     const firstJmcd = firstItem.getElementsByTagName("jmcd")[0]?.textContent;
     const firstName = firstItem.getElementsByTagName("jmfldnm")[0]?.textContent;
+    const firstGrade = firstItem.getElementsByTagName("seriesnm")[0]?.textContent || "";
 
-    loadScheduleToCalendar(firstJmcd, firstName);
+    loadScheduleToCalendar(firstJmcd, firstName, firstGrade);
 
 
     // 🔥 5) TOP 리스트 / 활용분야 / 기타 불러오기
@@ -167,7 +168,7 @@ document.getElementById("detailModal").addEventListener("click", (e) => {
 // ===========================================
 // 🔹 시험 일정 불러오기 함수
 // ===========================================
-export async function loadScheduleToCalendar(jmcd, certName = "") {
+export async function loadScheduleToCalendar(jmcd, certName = "", grade = "") {
     const scheduleContainer = document.getElementById("results_calendar");
 
     if (!jmcd) {
@@ -175,22 +176,35 @@ export async function loadScheduleToCalendar(jmcd, certName = "") {
         return;
     }
 
-    const xmlDoc = await fetchSchedule(jmcd, "2025");
-    const items = getItemsFromXML(xmlDoc);
+    const xmlDoc = await fetchSchedule(jmcd, grade, "2025");
 
-    // 제목 + 리스트 영역 따로 만들기
+    console.log("📡 받아온 XML Document:", xmlDoc);
+    console.log("📡 XML raw text:", new XMLSerializer().serializeToString(xmlDoc));
+
+    // 파싱 
+    let schedules = getItemsFromXML(xmlDoc);
+
+    console.log("📌 schedules 타입:", schedules);
+    console.log("📌 schedules instanceof Array:", schedules instanceof Array);
+    console.log("📌 schedules.length:", schedules.length);
+    
+    // 응답이 없을 때
+    if (!schedules || schedules.length === 0) {
+        scheduleContainer.innerHTML = `
+            <h2>📘 ${certName} (${grade}) 시험일정</h2>
+            <p>등록된 시험 일정이 없습니다.</p>
+        `;
+        return;
+    }
+
     scheduleContainer.innerHTML = `
-        <h2 style="margin-bottom:12px;">📘 ${certName || "자격증"} 시험일정</h2>
+        <h2 style="margin-bottom:12px;">📘 ${certName} (${grade}) 시험일정</h2>
         <div id="schedule-list"></div>
     `;
 
     const listContainer = document.getElementById("schedule-list");
-    renderScheduleList(items, listContainer);
+    renderScheduleList(schedules, listContainer);
 }
-
-// 전역 노출은 그대로 유지
-window.loadScheduleToCalendar = loadScheduleToCalendar;
-
 
 // ----------------------------
 // 📌 응시률이 높은 자격증 TOP 리스트
@@ -207,3 +221,9 @@ async function loadTopApplyList() {
     renderExamStatsList(items, container);
 }
 
+// ===========================================
+// 🔥 ES Module 환경에서도 window로 안전하게 노출
+// ===========================================
+window.loadScheduleToCalendar = (jmcd, certName, grade) => {
+    loadScheduleToCalendar(jmcd, certName, grade);
+};
