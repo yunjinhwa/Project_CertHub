@@ -4,6 +4,7 @@
      - 서버와 통신 / XML → JS DOM 변환
 */
 
+const API_BASE = "/api";
 
 // 자격 목록
 export async function fetchCertificates(keyword = "") {
@@ -48,22 +49,19 @@ export function getItemsFromXML(xmlDoc) {
 
 
 // 시험 일정 
-export async function fetchSchedule(jmcd, grade, year = new Date().getFullYear()) {
-    const url = `/api/schedule?jmcd=${jmcd}&grade=${grade}&implYy=${year}`;
+export async function fetchSchedule(jmcd, grade = "", year = "2025") {
+    let url = `${API_BASE}/schedule?jmcd=${jmcd}&implYy=${year}`;
 
-    const response = await fetch(url);
-    const xmlText = await response.text();
-
-    let parser = new DOMParser();
-    let xml = parser.parseFromString(xmlText, "application/xml");
-
-    // 혹시 XML 파싱 오류가 있으면 fallback으로 text/xml 한번 더 시도
-    if (xml.getElementsByTagName("parsererror").length > 0) {
-        xml = parser.parseFromString(xmlText, "text/xml");
+    // 🔥 grade가 존재할 때만 붙이기
+    if (grade && grade !== "undefined") {
+        url += `&grade=${encodeURIComponent(grade)}`;
     }
 
-    return xml;
+    console.log("📡 호출 URL:", url);
 
+    const res = await fetch(url);
+    const text = await res.text();
+    return new window.DOMParser().parseFromString(text, "text/xml");
 }
 
 // 응시자격별 통계 데이터

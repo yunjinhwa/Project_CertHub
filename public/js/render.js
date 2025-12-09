@@ -1,19 +1,25 @@
-/*
-    // js/render.js
-    - 화면 렌더링만 담당(XML 데이터를 받아 HTML 요소를 만들어 화면에 표시)
-    - XML 데이터를 HTML UI로 렌더링
-*/
+/* ============================================================
+   render.js — 완전한 최종본 (정리 완료 / 버그 제거 / 최신 구조 적용)
+   역할: 자격증 목록, 시험일정, 통계 렌더링만 담당
+============================================================ */
 
-// ⭐ 상세정보 함수
+// 상세정보 로더
 import { loadDetailInfo } from "./detail.js";
-// ⭐ 시험일정/자격 목록 공통 XML 도우미
-import { fetchCertificates, fetchSchedule, getItemsFromXML } from "./api.js";
-import { addSearchClick } from "./firebase/firebase-search-click.js"
 
-// 1) 자격증 목록 렌더링 기능 (renderListItem) --> 검색창에서 자격증을 검색했을 때, “자격증 정보 + 자세히 버튼” 형태의 리스트를 만드는 함수
+// 시험일정 렌더링 도우미
+import { getItemsFromXML } from "./api.js";
+
+// Firebase 로그
+import { addSearchClick } from "./firebase/firebase-search-click.js";
+
+
+
+/* ============================================================
+   📌 1) 자격증 목록 렌더링 (검색 결과 / 초기 화면)
+============================================================ */
 export function renderListItem(item, container) {
     const jmfldnm = item.getElementsByTagName('jmfldnm')[0]?.textContent || '없음';
-    const qualgbnm = item.getElementsByTagName('qualgbnm')[0]?.textContent || '없음';
+    const qualgbnm = item.getElementsByTagName('qualgbnm')[0]?.textContent || '없음';  // 등급
     const seriesnm = item.getElementsByTagName('seriesnm')[0]?.textContent || '없음';
     const obligfldnm = item.getElementsByTagName('obligfldnm')[0]?.textContent || '없음';
     const mdobligfldnm = item.getElementsByTagName('mdobligfldnm')[0]?.textContent || '없음';
@@ -36,12 +42,12 @@ export function renderListItem(item, container) {
             <div class="list-item-buttons">
                 <button class="btn detail-btn" data-jmcd="${jmcd}">자세히</button>
 
+                <!-- 🔥 불필요한 '>' 제거됨 -->
                 <button 
                     class="btn schedule-btn" 
-                    data-jmcd="${jmcd}" 
-                    data-grade="${seriesnm}"
+                    data-jmcd="${jmcd}"
                     data-name="${jmfldnm}"
-                >
+                    data-grade="${seriesnm}">
                     시험일정
                 </button>
             </div>
@@ -50,56 +56,46 @@ export function renderListItem(item, container) {
     `;
 
     container.appendChild(div);
-    
-    // "자세히" 버튼 클릭 시 자격증 정보를 함께 전달
-    // div.querySelector(".detail-btn").addEventListener("click", () => {
-    //     loadDetailInfo(jmcd, {
-    //         name: jmfldnm,
-    //         grade: qualgbnm,
-    //         series: seriesnm,
-    //         field1: obligfldnm,
-    //         field2: mdobligfldnm
-    //     });
-    // });
-    
-    // div.querySelector(".schedule-btn").addEventListener("click", () => {
-    //     loadScheduleByName(jmfldnm); 
-    // });
 
+    /* 상세정보 버튼 */
     div.querySelector(".detail-btn").addEventListener("click", () => {
-            addSearchClick({
-                certId: jmcd||null,
-                keyword: jmfldnm,
-                context: "detail_click_home"
-            }).catch((err) => {
-                console.error("search_click 기록 실패: " + err);
-            });
-            loadDetailInfo(jmcd, {
-                name: jmfldnm,
-                grade: qualgbnm,
-                series: seriesnm,
-                field1: obligfldnm,
-                field2: mdobligfldnm,
-            });
-        });
+        addSearchClick({
+            certId: jmcd || null,
+            keyword: jmfldnm,
+            context: "detail_click_home"
+        }).catch(console.error);
 
-    div.querySelector(".schedule-btn").addEventListener("click", (e) => {
-            const btn = e.target;
-            window.loadScheduleToCalendar(
-                btn.dataset.jmcd,
-                btn.dataset.name,
-                btn.dataset.grade  // 🔥 이제 "기사", "산업기사", "기능사", "기술사"가 정확하게 들어감
-            );
+        loadDetailInfo(jmcd, {
+            name: jmfldnm,
+            grade: qualgbnm,
+            series: seriesnm,
+            field1: obligfldnm,
+            field2: mdobligfldnm
         });
+    });
+
+    /* 시험일정 버튼 */
+    div.querySelector(".schedule-btn").addEventListener("click", (e) => {
+        const btn = e.target;
+        window.loadScheduleToCalendar(
+            btn.dataset.jmcd,
+            btn.dataset.name,
+            btn.dataset.grade   // 기사/산업기사/기능사/기능장/기술사
+        );
+    });
 }
 
-// ================================================================================================================================== //
-// 시험 일정 렌더링(renderScheduleList) - 시험 일정 API(XML) 데이터를 화면에 보기 좋게 정리해서 보여주는 기능
-// ================================================================================================================================== //
+
+
+
+/* ============================================================
+   📌 2) 시험일정 렌더링 — renderScheduleList
+   → 지나간 일정도 출력 + 카드 스타일 + 정렬 완료
+============================================================ */
 export function renderScheduleList(items, container) {
     container.innerHTML = "";
 
-    // YYYYMMDD → Date 객체로 변환
+    // 날짜 변환 도우미
     const toDate = (yyyymmdd) => {
         if (!yyyymmdd || yyyymmdd === "-" || yyyymmdd === "XXXXXXXX") return null;
         return new Date(
@@ -112,51 +108,51 @@ export function renderScheduleList(items, container) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 🔥 필기 원서접수 종료일(docregenddt)이 지난 일정은 제외
-    const upcoming = items.filter((item) => {
-        const end = item.getElementsByTagName("docregenddt")[0]?.textContent;
-        const endDate = toDate(end);
-        return endDate && endDate >= today;
+    // 🔥 전체 일정 정렬 (원서접수 마감일 기준)
+    const sorted = [...items].sort((a, b) => {
+        const aEnd = toDate(a.getElementsByTagName("docregenddt")[0]?.textContent);
+        const bEnd = toDate(b.getElementsByTagName("docregenddt")[0]?.textContent);
+        if (!aEnd || !bEnd) return 0;
+        return aEnd - bEnd;
     });
 
-    if (!upcoming.length) {
+    if (sorted.length === 0) {
         container.innerHTML = "<p>등록된 시험 일정이 없습니다.</p>";
         return;
     }
 
-    // 접수 종료일 기준 오름차순 정렬
-    upcoming.sort((a, b) => {
-        const aEnd = toDate(a.getElementsByTagName("docregenddt")[0]?.textContent);
-        const bEnd = toDate(b.getElementsByTagName("docregenddt")[0]?.textContent);
-        return aEnd - bEnd;
-    });
+    // 카드 렌더링
+    sorted.forEach((item) => {
+        const description     = item.getElementsByTagName("description")[0]?.textContent || "";
 
-    // 일정 카드 렌더링
-    upcoming.forEach((item) => {
-        const description       = item.getElementsByTagName("description")[0]?.textContent || "";
+        const docRegStartDt   = item.getElementsByTagName("docregstartdt")[0]?.textContent || "-";
+        const docRegEndDt     = item.getElementsByTagName("docregenddt")[0]?.textContent || "-";
+        const docExamDt       = item.getElementsByTagName("docexamdt")[0]?.textContent || "-";
+        const docPassDt       = item.getElementsByTagName("docpassdt")[0]?.textContent || "-";
 
-        const docRegStartDt     = item.getElementsByTagName("docregstartdt")[0]?.textContent || "-";
-        const docRegEndDt       = item.getElementsByTagName("docregenddt")[0]?.textContent || "-";
-        const docExamDt         = item.getElementsByTagName("docexamdt")[0]?.textContent || "-";
-        const docPassDt         = item.getElementsByTagName("docpassdt")[0]?.textContent || "-";
+        const docSubmitStartDt = item.getElementsByTagName("docsubmitstartdt")[0]?.textContent || "-";
+        const docSubmitEndDt   = item.getElementsByTagName("docsubmitentdt")[0]?.textContent || "-";
 
-        const docSubmitStartDt  = item.getElementsByTagName("docsubmitstartdt")[0]?.textContent || "-";
-        const docSubmitEndDt    = item.getElementsByTagName("docsubmitentdt")[0]?.textContent || "-";
+        const pracRegStartDt  = item.getElementsByTagName("pracregstartdt")[0]?.textContent || "-";
+        const pracRegEndDt    = item.getElementsByTagName("pracregenddt")[0]?.textContent || "-";
+        const pracExamStartDt = item.getElementsByTagName("pracexamstartdt")[0]?.textContent || "-";
+        const pracExamEndDt   = item.getElementsByTagName("pracexamenddt")[0]?.textContent || "-";
+        const pracPassDt      = item.getElementsByTagName("pracpassdt")[0]?.textContent || "-";
 
-        const pracRegStartDt    = item.getElementsByTagName("pracregstartdt")[0]?.textContent || "-";
-        const pracRegEndDt      = item.getElementsByTagName("pracregenddt")[0]?.textContent || "-";
-        const pracExamStartDt   = item.getElementsByTagName("pracexamstartdt")[0]?.textContent || "-";
-        const pracExamEndDt     = item.getElementsByTagName("pracexamenddt")[0]?.textContent || "-";
-        const pracPassDt        = item.getElementsByTagName("pracpassdt")[0]?.textContent || "-";
+        const endDate = toDate(docRegEndDt);
+        const isPast = endDate && endDate < today;
 
         const div = document.createElement("div");
         div.className = "schedule-card";
+
+        if (isPast) div.style.opacity = "0.55";
+
         div.innerHTML = `
-            <h3>📘 ${description}</h3>
+            <h3>${description} ${isPast ? "<span style='color:#b00'>(지난 일정)</span>" : ""}</h3>
 
             <p>📝 필기 원서접수: ${docRegStartDt} ~ ${docRegEndDt}</p>
             <p>✏️ 필기 시험일: ${docExamDt}</p>
-            <p>📢 필기 합격(예정) 발표: ${docPassDt}</p>
+            <p>📢 필기 합격 발표: ${docPassDt}</p>
 
             <p>📄 응시자격 서류제출: ${docSubmitStartDt} ~ ${docSubmitEndDt}</p>
 
@@ -170,21 +166,21 @@ export function renderScheduleList(items, container) {
 }
 
 
-// ================================================================================================================================== //
 
-// 자격별 통계 렌더링(renderExamStatsList) - 합격/접수 통계 XML을 Top10 형태로 보여주는 기능
+
+/* ============================================================
+   📌 3) TOP10 통계 렌더링
+============================================================ */
 export function renderExamStatsList(items, container) {
     container.innerHTML = "";
 
-    // 아이템 없으면 “데이터 없음”
     if (!items || !items.length) {
         container.innerHTML = "<p>데이터가 없습니다.</p>";
         return;
     }
 
-    // XML → JS 객체 변환 - 정렬/비교가 가능해짐
-    const dataList = Array.from(items).map(item => ({
-        name: item.getElementsByTagName("emqualDispNm")[0]?.textContent || "이름없음",
+    const list = Array.from(items).map(item => ({
+        name: item.getElementsByTagName("emqualDispNm")[0]?.textContent || "-",
         qualDisp: item.getElementsByTagName("grdNm")[0]?.textContent || "-",
         implYy: item.getElementsByTagName("implYy")[0]?.textContent || "-",
         implSeq: item.getElementsByTagName("implSeq")[0]?.textContent || "-",
@@ -193,16 +189,9 @@ export function renderExamStatsList(items, container) {
         silPass: Number(item.getElementsByTagName("silPassCnt")[0]?.textContent || 0),
     }));
 
-    // 접수자 수 기준 정렬 - 가장 인기가 많은/응시자가 많은 자격증을 상위에 배치
-    dataList.sort((a, b) => b.apply - a.apply);
+    list.sort((a, b) => b.apply - a.apply);
 
-    if (!dataList.length) {
-        container.innerHTML = "<p>데이터가 없습니다.</p>";
-        return;
-    }
-
-    // Top10만 가져오기 - 각 항목을 독립된 div로 생성
-    dataList.slice(0, 10).forEach(item => {
+    list.slice(0, 10).forEach(item => {
         const card = document.createElement("div");
         card.className = "exam-stat-card";
 
@@ -215,19 +204,24 @@ export function renderExamStatsList(items, container) {
                     <span class="stat-label">📅 시행년도</span>
                     <span class="stat-value">${item.implYy}</span>
                 </div>
+
                 <div class="stat-row">
                     <span class="stat-label">🔢 회차</span>
                     <span class="stat-value">${item.implSeq}회</span>
                 </div>
+
                 <div class="stat-row highlight">
                     <span class="stat-label">📝 접수자</span>
                     <span class="stat-value-primary">${item.apply.toLocaleString()} 명</span>
                 </div>
+
                 <div class="stat-divider"></div>
+
                 <div class="stat-row">
                     <span class="stat-label">✏️ 필기 합격</span>
                     <span class="stat-value">${item.pilPass.toLocaleString()} 명</span>
                 </div>
+
                 <div class="stat-row">
                     <span class="stat-label">🛠️ 실기 합격</span>
                     <span class="stat-value">${item.silPass.toLocaleString()} 명</span>
@@ -239,132 +233,3 @@ export function renderExamStatsList(items, container) {
     });
 }
 
-// ===========================================
-// 🔥 자격명으로 ‘직급 전체 일정’을 불러오는 함수
-// ===========================================
-export async function loadScheduleByName(certName) {
-    console.log("🔥 loadScheduleByName 실행:", certName);
-
-    const scheduleContainer = document.getElementById("results_calendar");
-    let html = `<h2>📘 ${certName} 시험일정</h2>`;
-    let hasSchedule = false;
-
-    // 1) 전체 자격 목록 불러오기
-    const xmlDoc = await fetchCertificates("");
-    console.log("📌 XML:", xmlDoc);
-    const items = getItemsFromXML(xmlDoc);
-    console.log("📌 전체 자격 개수:", items.length);
-
-    /*
-    // 로그 창 확인을 위한 코드 ━━━━━━━━━━━━━━━━━━━━━━━
-    items.forEach(item => {
-        const name = item.getElementsByTagName("jmfldnm")[0]?.textContent;
-        const grade = item.getElementsByTagName("qualgbnm")[0]?.textContent;
-
-        console.log("🔍 자격:", name, "| 등급:", grade);
-    });
-    */
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    items.forEach(item => {
-        const name = item.getElementsByTagName("jmfldnm")[0]?.textContent;
-        console.log(`🔍 [원본 자격명]: "${name}"`);
-    });
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    console.log("------ 자격명 원본 확인 ------");
-    items.forEach(item => {
-        const raw = item.getElementsByTagName("jmfldnm")[0]?.textContent;
-        const cleaned = raw.trim();
-        console.log(`원본: "${raw}" | trim: "${cleaned}" | endsWith(기술사):`, cleaned.endsWith("기술사"));
-    });
-    console.log("------------------------------");
-
-
-    // 2) 직급 자동 분류
-    let targetGrades = [];
-
-    if (certName.endsWith("산업기사")) {
-        targetGrades = ["산업기사"];
-    } 
-    else if (certName.endsWith("기사")) {
-        targetGrades = ["기사"];
-    }
-    else if (certName.endsWith("기능사")) {
-        targetGrades = ["기능사"];
-    }
-    else if (certName.endsWith("기능장")) {
-        targetGrades = ["기능장"];
-    }
-    else if (certName.endsWith("기술사")) {
-        targetGrades = ["기술사"];
-    }
-
-    // ⭐⭐⭐ 3) 등급 필터링 로직 (여기 교체!)
-    const filtered = items.filter(item => {
-        const name = item.getElementsByTagName("jmfldnm")[0]?.textContent.trim();
-
-        if (targetGrades.includes("기술사") && name.endsWith("기술사")) return true;
-        if (targetGrades.includes("기능장") && name.endsWith("기능장")) return true;
-        if (targetGrades.includes("기능사") && name.endsWith("기능사")) return true;
-        if (targetGrades.includes("산업기사") && name.endsWith("산업기사")) return true;
-        if (targetGrades.includes("기사") && (name.endsWith("기사") && !name.endsWith("산업기사"))) return true;
-
-        return false;
-    });
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // 필터링 후 로그 확인
-    console.log("🎯 targetGrades:", targetGrades);
-    console.log("🎯 필터링된 개수:", filtered.length);
-    filtered.forEach(f => {
-        console.log("👉 필터링 통과:", f.getElementsByTagName("jmfldnm")[0]?.textContent);
-    });
-    console.log("------------------------------");
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    // 4) 각 자격증 일정 조회
-    for (const item of filtered) {
-        const jmcd = item.getElementsByTagName("jmcd")[0]?.textContent;
-        const name = item.getElementsByTagName("jmfldnm")[0]?.textContent;
-
-        console.log(`📡 호출 URL: /api/schedule?jmcd=${jmcd}&implYy=2025`);
-
-        const xml = await fetchSchedule(jmcd, 2025);
-        const schedules = getItemsFromXML(xml);
-
-        if (!schedules.length) continue;
-
-        hasSchedule = true;
-
-        html += `<h3>🔷 ${name}</h3>`;
-        html += createScheduleHTML(schedules);
-    }
-
-    if (!hasSchedule) {
-        html += "<p>등록된 시험 일정이 없습니다.</p>";
-    }
-
-    scheduleContainer.innerHTML = html;
-}
-
-
-// 🔥 schedule-card HTML 생성기
-function createScheduleHTML(schedules) {
-    let html = "";
-
-    schedules.forEach(s => {
-        const docRegStartDt = s.getElementsByTagName("docregstartdt")[0]?.textContent || "-";
-        const docRegEndDt   = s.getElementsByTagName("docregenddt")[0]?.textContent || "-";
-        const docExamDt     = s.getElementsByTagName("docexamdt")[0]?.textContent || "-";
-        const docPassDt     = s.getElementsByTagName("docpassdt")[0]?.textContent || "-";
-
-        html += `
-            <div class="schedule-card">
-                <p>📝 원서접수: ${docRegStartDt} ~ ${docRegEndDt}</p>
-                <p>✏️ 필기시험: ${docExamDt}</p>
-                <p>📢 합격발표: ${docPassDt}</p>
-            </div>
-        `;
-    });
-
-    return html;
-}

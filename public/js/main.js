@@ -144,7 +144,7 @@ async function initPage() {
 
     const firstJmcd = firstItem.getElementsByTagName("jmcd")[0]?.textContent;
     const firstName = firstItem.getElementsByTagName("jmfldnm")[0]?.textContent;
-    const firstGrade = firstItem.getElementsByTagName("seriesnm")[0]?.textContent || "";
+    const firstGrade = firstItem.getElementsByTagName("qualgbnm")[0]?.textContent || "";
 
     loadScheduleToCalendar(firstJmcd, firstName, firstGrade);
 
@@ -214,7 +214,7 @@ export async function loadScheduleToCalendar(jmcd, certName = "", grade = "") {
     }
 
     scheduleContainer.innerHTML = `
-        <h2 style="margin-bottom:12px;">📘 ${certName} (${grade}) 시험일정</h2>
+        <h2 style="margin-bottom:12px;">📝 ${certName} 시험일정</h2>
         <div id="schedule-list"></div>
     `;
 
