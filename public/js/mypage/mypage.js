@@ -1,5 +1,46 @@
 // 마이페이지 초기화
 document.addEventListener("DOMContentLoaded", async () => {
+  // 🔹 1) Firestore에서 프로필 불러오기
+  try {
+    if (window.firebaseUsersApi && window.firebaseUsersApi.getCurrentUserDoc) {
+      const profile = await window.firebaseUsersApi.getCurrentUserDoc();
+
+      // Firestore -> userProfile 전역에 반영
+      window.userProfile = {
+        name: profile.name || "이름 없음",
+        avatar: profile.image || "👤",
+        avatarType: profile.image ? "image" : "emoji",
+      };
+
+      // 마이페이지 상단 카드 DOM 업데이트
+      const profileCardAvatar = document.querySelector(".card .avatar");
+      const profileCardName = document.querySelector(".card .h3");
+
+      if (profileCardAvatar) {
+        profileCardAvatar.innerHTML = "";
+        if (window.userProfile.avatarType === "image") {
+          const img = document.createElement("img");
+          img.src = window.userProfile.avatar;
+          img.alt = "프로필 사진";
+          img.style.width = "48px";
+          img.style.height = "48px";
+          img.style.borderRadius = "50%";
+          profileCardAvatar.appendChild(img);
+        } else {
+          profileCardAvatar.textContent = window.userProfile.avatar; // (기본 👤)
+        }
+      }
+
+      if (profileCardName) {
+        profileCardName.textContent = `${window.userProfile.name} 님`;
+      }
+    } else {
+      console.warn("firebaseUsersApi.getCurrentUserDoc 를 찾을 수 없습니다.");
+    }
+  } catch (err) {
+    console.error("프로필 로딩 중 에러:", err);
+  }
+
   console.log("=== 마이페이지 초기화 시작 ===");
   console.log("setupThemeToggle:", typeof setupThemeToggle);
   console.log("renderTodo:", typeof renderTodo);
@@ -9,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   console.log("renderCommunityByKeywords:", typeof renderCommunityByKeywords);
   console.log("renderExamSchedule:", typeof renderExamSchedule);
   console.log("renderBookmarks:", typeof renderBookmarks);
-  
+
   setupThemeToggle();
   renderTodo("todo-week");
   renderCertDday(); // 관심 자격증 D-day

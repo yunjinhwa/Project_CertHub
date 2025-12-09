@@ -47,17 +47,42 @@ window.showEditProfileModal = function() {
     document.body.style.removeProperty("--scrollbar-width");
   };
 
-  const saveProfile = () => {
+    // 기존: const saveProfile = () => {
+  const saveProfile = async () => {
     if (currentName.trim().length === 0) return;
-    
-    // API 호출 예정 지점
+
+    // 🔹 1) 전역 userProfile 업데이트
     userProfile.name = currentName;
     userProfile.avatar = currentAvatar;
     userProfile.avatarType = currentAvatarType;
-    
-    // UI 업데이트
-    const nameElement = document.querySelector(".h3");
-    const avatarElement = document.querySelector(".avatar");
+
+    // 🔹 2) Firestore users 문서 업데이트 (가능한 경우에만)
+    try {
+      if (
+        window.firebaseUsersApi &&
+        typeof window.firebaseUsersApi.updateCurrentUser === "function"
+      ) {
+        await window.firebaseUsersApi.updateCurrentUser({
+          name: currentName,
+          // 이미지일 때만 image 필드에 저장, 이모지/기본이면 null
+          image: currentAvatarType === "image" ? currentAvatar : null,
+        });
+        console.log("Firestore 프로필 업데이트 완료");
+      } else {
+        console.warn("firebaseUsersApi.updateCurrentUser 를 찾을 수 없습니다.");
+      }
+    } catch (err) {
+      console.error("Firestore 프로필 업데이트 중 에러:", err);
+      // 실패해도 화면 변경은 이미 되었으니, 안내만
+      setTimeout(
+        () => showModal("알림", "프로필 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
+        100
+      );
+    }
+
+    // 🔹 3) 마이페이지 상단 카드 UI 업데이트
+    const nameElement = document.querySelector(".card .h3");
+    const avatarElement = document.querySelector(".card .avatar");
     if (nameElement) nameElement.textContent = currentName + " 님";
     if (avatarElement) {
       avatarElement.innerHTML = "";
@@ -68,23 +93,12 @@ window.showEditProfileModal = function() {
         avatarElement.textContent = currentAvatar;
       }
     }
-    
+
+    // 🔹 4) 모달 닫기 + 성공 메시지
     closeModal();
-    // 성공 메시지 (선택사항)
     setTimeout(() => showModal("알림", "프로필이 저장되었습니다."), 100);
   };
 
-  // 아바타 업데이트 함수
-  const updateAvatarDisplay = () => {
-    avatarElement.innerHTML = "";
-    if (currentAvatarType === "image") {
-      const img = createEl("img", { src: currentAvatar, alt: "프로필 사진" });
-      avatarElement.appendChild(img);
-    } else {
-      avatarElement.textContent = currentAvatar;
-    }
-    updateSaveButton();
-  };
 
   // 파일 입력 생성
   const fileInput = createEl("input", {
@@ -98,7 +112,9 @@ window.showEditProfileModal = function() {
         reader.onload = (event) => {
           currentAvatar = event.target.result;
           currentAvatarType = "image";
-          updateAvatarDisplay();
+          //updateAvatarDisplay();
+          //파이어베이스 스토리지는 유료이다.
+          console.log("추후 지원 예정입니다");
         };
         reader.readAsDataURL(file);
       }
@@ -179,6 +195,28 @@ window.showEditProfileModal = function() {
       ])
     ])
   ]);
+  
+    // 아바타 영역을 다시 그려주는 함수
+  // const updateAvatarDisplay = () => {
+  //   // 아바타 DOM 비우기
+  //   avatarElement.innerHTML = "";
+
+  //   // 타입에 따라 이미지 / 이모지 표시
+  //   if (currentAvatarType === "image" && currentAvatar) {
+  //     const img = createEl("img", {
+  //       src: currentAvatar,
+  //       alt: "프로필 사진",
+  //     });
+  //     avatarElement.appendChild(img);
+  //   } else {
+  //     // 이미지가 아니면 이모지(또는 기본값) 표시
+  //     avatarElement.textContent = currentAvatar || DEFAULT_AVATAR;
+  //   }
+
+  //   // 아바타가 바뀌면 저장 버튼 상태도 다시 체크
+  //   updateSaveButton();
+  // };
+
 
   // 스크롤바 너비 계산 및 배경 스크롤 막기
   const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;

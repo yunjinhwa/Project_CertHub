@@ -35,6 +35,10 @@
         "destination": "/index.html",
         "source": "/login",
         "destination": "/login.html"
+      },
+      {
+        "source": "/mypage",
+        "destination": "/mypage.html"
       }
     ]
   }

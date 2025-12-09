@@ -15,7 +15,6 @@
     </div>
     <nav class="nav-actions">
       <a class="btn ghost" href="index.html">홈</a>
-      <button class="logout" data-logout>로그아웃</button>
 
       <button class="btn ghost" id="toggleTheme">🌓 Dark mode</button>
     </nav>
@@ -34,7 +33,7 @@
             </div>
             <div class="row">
               <button class="btn btn-profile-edit" id="editProfileBtn">프로필 편집</button>
-              <button class="btn ghost" id="logoutBtn" style="margin-left: 8px;">로그아웃</button>
+              <button class="btn ghost" id="logoutBtn" style="margin-left: 8px;" data-logout>로그아웃</button>
             </div>
           </div>
         </div>
@@ -75,7 +74,24 @@
     <p class="caption muted">계정 · 알림 · 데이터 연동은 추후 설정에서 제공됩니다.</p>
   </footer>
 
+    <!-- ======================= 공통 Modal ======================= -->
+  <div id="detailModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button id="modalCloseBtn" type="button">✕</button>
+      <h3 id="modalTitle">알림</h3>
+      <div id="modalBody">
+        내용을 불러오는 중...
+      </div>
+    </div>
+  </div>
+
+  <!-- 공통 JS & 마이페이지 JS -->
   <script src="js/app_common.js"></script>
+
+  <!-- 모달 구현 (showModal 정의) -->
+  <script src="js/modal.js"></script>
+
+  <!-- 마이페이지 전용 모듈들 -->
   <script src="js/mypage/recommendation.js"></script>
   <script src="js/mypage/profile-edit.js"></script>
   <script src="js/mypage/todo-manager.js"></script>
@@ -84,10 +100,14 @@
   <script src="js/mypage/exam-schedule.js"></script>
   <script src="js/mypage/bookmarks.js"></script>
   <script src="js/mypage/mypage.js"></script>
+
   <!--firebase module-->
   <script type="module" src="js/firebase/firebase-auth-state.js"></script>
   <script type="module" src="js/firebase/firebase-logout.js"></script>
   <script type="module" src="js/firebase/firebase-todo-weeks.js"></script>
   <script type="module" src="js/firebase/sync/firebase-todo-week-sync.js"></script>
+  <script type="module" src="js/firebase/firebase-users.js"></script>
+  <script type="module" src="js/firebase/firebase-bookmark.js"></script>
 </body>
 </html>
+

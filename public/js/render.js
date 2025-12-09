@@ -8,7 +8,7 @@
 import { loadDetailInfo } from "./detail.js";
 // ⭐ 시험일정/자격 목록 공통 XML 도우미
 import { fetchCertificates, fetchSchedule, getItemsFromXML } from "./api.js";
-
+import { addSearchClick } from "./firebase/firebase-search-click.js"
 
 // 1) 자격증 목록 렌더링 기능 (renderListItem) --> 검색창에서 자격증을 검색했을 때, “자격증 정보 + 자세히 버튼” 형태의 리스트를 만드는 함수
 export function renderListItem(item, container) {
@@ -52,25 +52,38 @@ export function renderListItem(item, container) {
     container.appendChild(div);
     
     // "자세히" 버튼 클릭 시 자격증 정보를 함께 전달
-    div.querySelector(".detail-btn").addEventListener("click", () => {
-        loadDetailInfo(jmcd, {
-            name: jmfldnm,
-            grade: qualgbnm,
-            series: seriesnm,
-            field1: obligfldnm,
-            field2: mdobligfldnm
-        });
-    });
+    // div.querySelector(".detail-btn").addEventListener("click", () => {
+    //     loadDetailInfo(jmcd, {
+    //         name: jmfldnm,
+    //         grade: qualgbnm,
+    //         series: seriesnm,
+    //         field1: obligfldnm,
+    //         field2: mdobligfldnm
+    //     });
+    // });
     
-    div.querySelector(".schedule-btn").addEventListener("click", () => {
-        loadScheduleByName(jmfldnm); 
-    });
+    // div.querySelector(".schedule-btn").addEventListener("click", () => {
+    //     loadScheduleByName(jmfldnm); 
+    // });
 
-    div.querySelector(".detail-btn")
-        .addEventListener("click", () => loadDetailInfo(jmcd));
+    div.querySelector(".detail-btn").addEventListener("click", () => {
+            addSearchClick({
+                certId: jmcd||null,
+                keyword: jmfldnm,
+                context: "detail_click_home"
+            }).catch((err) => {
+                console.error("search_click 기록 실패: " + err);
+            });
+            loadDetailInfo(jmcd, {
+                name: jmfldnm,
+                grade: qualgbnm,
+                series: seriesnm,
+                field1: obligfldnm,
+                field2: mdobligfldnm,
+            });
+        });
 
-    div.querySelector(".schedule-btn")
-        .addEventListener("click", (e) => {
+    div.querySelector(".schedule-btn").addEventListener("click", (e) => {
             const btn = e.target;
             window.loadScheduleToCalendar(
                 btn.dataset.jmcd,

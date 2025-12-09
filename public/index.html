@@ -121,13 +121,19 @@
     </footer>
 
     <!-- ======================= Modal ======================= -->
-    <div id="detailModal" class="modal-overlay">
+    <div id="detailModal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="modalCloseBtn">✕</button>
-            <div id="modalBody">불러오는 중...</div>
+            <h3 id="modalTitle">자격 상세 정보</h3>
+            <div id="modalBody">
+                불러오는 중...
+            </div>
         </div>
     </div>
 
+
+    <script src="js/modal.js"></script>
+    <script type="module" src="js/firebase/firebase-search-click.js"></script>
 </body>
 
 </html>
