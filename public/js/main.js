@@ -173,7 +173,7 @@ export async function loadScheduleToCalendar(jmcd, certName = "", grade = "") {
     const xmlDoc = await fetchSchedule(jmcd, grade, "2025");
 
     console.log("📡 받아온 XML Document:", xmlDoc);
-    //console.log("📡 XML raw text:", new XMLSerializer().serializeToString(xmlDoc));
+    console.log("📡 XML raw text:", new XMLSerializer().serializeToString(xmlDoc));
 
     // 파싱 
     let schedules = getItemsFromXML(xmlDoc);
