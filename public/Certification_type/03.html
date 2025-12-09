@@ -3,97 +3,146 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>민간 자격 안내</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>민간자격 안내 - CertHub</title>
   <link rel="stylesheet" href="../css/Certification.css">
 </head>
 
-<body>
+<body class="light">
 
-  <!-- 홈 버튼 -->
-  <a href="../index.html" class="btn home-btn">홈으로 돌아가기</a>
+  <!-- 홈으로 돌아가기 버튼 -->
+  <a href="../index.html" class="btn home-btn">← 홈으로</a>
 
-  <!-- 전체 카드 래퍼 -->
+  <!-- 전체 페이지 래퍼 -->
   <div class="cert-page-wrapper">
 
-    <!-- 제목 카드 -->
-    <div class="cert-section-card">
-      <h1>민간 자격 안내</h1>
-      <p>나라에서 공식적으로 발행한 자격증이 아닌, 단체나 법인, 개인 등이 발급하는 자격증입니다.</p>
-    </div>
-
-    <!-- 민간 자격이란? -->
-    <div class="cert-section-card">
-      <h2>민간 자격이란?</h2>
-      <p>민간 자격은 정부가 직접 발행하지 않는 자격증으로, 비영리기관·학회·법인 등이 발급할 수 있습니다.</p>
-      <ul>
-        <li>필기시험이나 실기시험을 통해 취득할 수 있습니다.</li>
-        <li>국가공인 민간자격과 국가등록 민간자격으로 나뉩니다.</li>
-      </ul>
-    </div>
-
-    <div class="two-row">
-      <!-- 국가공인 민간자격 -->
-      <div class="cert-section-card half">
-        <h2>국가공인 민간자격</h2>
-        <ul>
-          <li>정부가 정한 기준을 충족해 국가가 공인한 민간 자격입니다.</li>
-          <li>공신력과 효용성이 높아 취업 시 우대되는 경우가 많습니다.</li>
-          <li>일반 민간 자격과 달리 엄격한 심사를 통해 인증됩니다.</li>
-        </ul>
-      </div>
-
-      <!-- 국가등록 민간자격 -->
-      <div class="cert-section-card half">
-        <h2>국가등록 민간자격</h2>
-        <ul>
-          <li>민간자격법에 따라 등록되어 있는 자격증입니다.</li>
-          <li>등록 자체가 자격의 전문성을 보장하는 것은 아닙니다.</li>
-          <li>특정 분야의 전문성 인정이나 교육 과정에서 활용되는 경우가 많습니다.</li>
-        </ul>
+    <!-- 헤더 영역 -->
+    <div class="cert-header">
+      <h1>민간자격</h1>
+      <p style="font-size: 16px; color: var(--muted); margin: 8px 0 0;">
+        국가가 아닌 민간 단체, 법인, 개인이 발급하는 자격증으로, 국가공인과 국가등록으로 구분됩니다.
+      </p>
+      
+      <div class="cert-meta">
+        <div class="cert-meta-item">
+          <div class="cert-meta-label">발급 주체</div>
+          <div class="cert-meta-value">민간 단체, 법인, 개인</div>
+        </div>
+        <div class="cert-meta-item">
+          <div class="cert-meta-label">구분</div>
+          <div class="cert-meta-value">국가공인 / 국가등록</div>
+        </div>
       </div>
     </div>
 
-    <!-- 취득 시 유의점 -->
-    <div class="cert-section-card">
-      <h2>민간자격증 취득 시 유의점</h2>
-      <ul>
-        <li><strong>공신력 확인:</strong> 자격증의 공신력에 따라 실제 도움되는 정도가 크게 달라지므로 반드시 확인해야 합니다.</li>
-        <li><strong>등록 여부 확인:</strong> 등록만 되어 있고 실효성이 없는 자격도 있으므로 실질적 효용성을 살펴야 합니다.</li>
-        <li><strong>국가공인 여부 확인:</strong> 국가공인 민간자격은 취업·경력 관리에서 유리하게 작용할 수 있습니다.</li>
-      </ul>
+    <!-- 탭 네비게이션 -->
+    <div class="cert-tabs">
+      <button class="cert-tab active">기본정보</button>
+      <button class="cert-tab">공인 vs 등록</button>
+      <button class="cert-tab">분야별 자격증</button>
     </div>
 
-    <!-- 민간 자격증 종류 -->
-    <div class="cert-section-card">
-      <h2>민간 자격증 종류</h2>
-      <ul>
-        <li>IT 분야</li>
-        <li>필라테스, 요가 분야</li>
-        <li>건강, 운동 분야</li>
-        <li>반려동물, 애견미용 분야</li>
-        <li>미용, 뷰티 분야</li>
-        <li>공예 분야</li>
-        <li>외국어 분야</li>
-        <li>전산, 세무, 회계 분야</li>
-        <li>경영 분야</li>
-        <li>그래픽, 일러스트 분야 등</li>
-      </ul>
+    <!-- 탭 1: 기본정보 -->
+    <div class="tab-content active">
+      <!-- 개요 -->
+      <div class="cert-section-card">
+        <h2>민간자격이란?</h2>
+        <p>
+          민간 자격은 정부가 직접 발행하지 않는 자격증으로, 비영리기관·학회·법인 등이 발급할 수 있습니다.
+          필기시험이나 실기시험을 통해 취득할 수 있으며, 국가공인 민간자격과 국가등록 민간자격으로 나뉩니다.
+          특정 분야의 전문성을 인정받거나 취업, 교육 과정에서 활용할 수 있습니다.
+        </p>
+      </div>
+
+      <!-- 유의사항 -->
+      <div class="cert-section-card">
+        <h2>민간자격증 취득 시 유의점</h2>
+        <ul>
+          <li><strong>공신력 확인</strong> 자격증의 공신력에 따라 실제 도움되는 정도가 크게 달라지므로 반드시 확인해야 합니다</li>
+          <li><strong>등록 여부 확인</strong> 등록만 되어 있고 실효성이 없는 자격도 있으므로 실질적 효용성을 살펴야 합니다</li>
+          <li><strong>국가공인 여부</strong> 국가공인 민간자격은 취업·경력 관리에서 유리하게 작용할 수 있습니다</li>
+          <li><strong>발급기관 확인</strong> 발급 기관의 신뢰도와 업계 인지도를 확인하세요</li>
+          <li><strong>수강료 주의</strong> 일부 자격증은 과도한 교육비를 요구하므로 비용 대비 효과를 따져보세요</li>
+        </ul>
+      </div>
+
+      <!-- 외부 링크 -->
+      <div class="cert-section-card link-list">
+        <h3>더 알아보기</h3>
+        <ul>
+          <li><a href="https://www.pqi.or.kr/indexMain.do" target="_blank">민간자격정보서비스 웹사이트</a></li>
+          <li><a href="https://www.pqi.or.kr/inf/qul/infQulAcknSearch.do" target="_blank">국가공인 민간자격 조회</a></li>
+          <li><a href="https://www.pqi.or.kr/inf/qul/infQulRegSearch.do" target="_blank">민간자격 등록 현황 조회</a></li>
+        </ul>
+      </div>
     </div>
 
-    <!-- 외부 링크 (화살표 아이콘 버전 가능) -->
-    <div class="cert-section-card link-list">
-      <h2>자세한 정보</h2>
-      <ul>
-        <li>
-          <a href="https://www.pqi.or.kr/indexMain.do" target="_blank">
-            민간자격정보서비스 웹사이트
-          </a>
-        </li>
-      </ul>
+    <!-- 탭 2: 공인 vs 등록 -->
+    <div class="tab-content">
+      <!-- 2열 그리드 -->
+      <div class="two-row">
+        <!-- 국가공인 -->
+        <div class="cert-section-card">
+          <h2>국가공인 민간자격</h2>
+          <ul>
+            <li><strong>공신력 보장</strong> 정부가 정한 기준을 충족해 국가가 공인한 민간 자격입니다</li>
+            <li><strong>취업 우대</strong> 공신력과 효용성이 높아 취업 시 우대되는 경우가 많습니다</li>
+            <li><strong>엄격한 심사</strong> 일반 민간 자격과 달리 엄격한 심사를 통해 인증됩니다</li>
+            <li><strong>법적 근거</strong> 자격기본법에 따라 공인 절차를 거칩니다</li>
+            <li><strong>신뢰도 높음</strong> 국가 차원의 품질 보증을 받은 자격증입니다</li>
+          </ul>
+        </div>
+
+        <!-- 국가등록 -->
+        <div class="cert-section-card">
+          <h2>국가등록 민간자격</h2>
+          <ul>
+            <li><strong>등록 기준</strong> 민간자격법에 따라 등록되어 있는 자격증입니다</li>
+            <li><strong>주의사항</strong> 등록 자체가 자격의 전문성을 보장하는 것은 아닙니다</li>
+            <li><strong>활용 분야</strong> 특정 분야의 전문성 인정이나 교육 과정에서 활용되는 경우가 많습니다</li>
+            <li><strong>다양성</strong> 다양한 분야에서 폭넓게 발급됩니다</li>
+            <li><strong>선택 주의</strong> 실효성과 업계 인정도를 반드시 확인해야 합니다</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 선택 가이드 -->
+      <div class="cert-section-card">
+        <h3>민간자격 선택 가이드</h3>
+        <ul>
+          <li><strong>목적 명확화</strong> 취업, 창업, 자기계발 등 취득 목적을 명확히 하세요</li>
+          <li><strong>시장 수요 조사</strong> 해당 자격증의 업계 수요와 활용도를 조사하세요</li>
+          <li><strong>교육 과정 확인</strong> 체계적인 교육 프로그램이 제공되는지 확인하세요</li>
+          <li><strong>비용 대비 효과</strong> 자격 취득 비용과 기대 효과를 비교 분석하세요</li>
+          <li><strong>후기 확인</strong> 실제 취득자들의 후기와 활용 사례를 참고하세요</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 탭 3: 분야별 자격증 -->
+    <div class="tab-content">
+      <!-- 분야별 종류 -->
+      <div class="cert-section-card">
+        <h2>민간자격증 주요 분야</h2>
+        <ul>
+          <li><strong>IT 분야</strong> 프로그래밍, 네트워크, 보안, 데이터 분석 등</li>
+          <li><strong>건강·운동</strong> 필라테스, 요가, 퍼스널 트레이닝, 스포츠 마사지</li>
+          <li><strong>반려동물</strong> 애견미용, 반려동물 행동 전문가, 펫시터</li>
+          <li><strong>미용·뷰티</strong> 네일아트, 메이크업, 피부관리, 헤어 스타일링</li>
+          <li><strong>공예·예술</strong> 도예, 목공예, 플라워 디자인, 캘리그라피</li>
+          <li><strong>외국어</strong> TOEIC, TOEFL, JLPT, HSK 등</li>
+          <li><strong>전산·회계</strong> 전산세무, 전산회계, ERP 등</li>
+          <li><strong>경영·마케팅</strong> 사회조사분석사, SNS마케팅, 브랜드매니저</li>
+          <li><strong>디자인</strong> 그래픽 디자인, 일러스트, UX/UI 디자인</li>
+          <li><strong>심리·상담</strong> 심리상담사, 미술치료사, 놀이치료사</li>
+        </ul>
+      </div>
     </div>
 
   </div>
 
+  <script src="../js/cert-theme.js"></script>
+  <script src="../js/cert-tabs.js"></script>
 </body>
 
 </html>

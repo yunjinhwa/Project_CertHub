@@ -3,129 +3,177 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>국가자격 안내</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>국가자격 안내 - CertHub</title>
   <link rel="stylesheet" href="../css/Certification.css">
 </head>
 
-<body>
+<body class="light">
 
   <!-- 홈으로 돌아가기 버튼 -->
-  <a href="../index.html" class="btn home-btn">홈으로 돌아가기</a>
+  <a href="../index.html" class="btn home-btn">← 홈으로</a>
 
   <!-- 전체 페이지 래퍼 -->
   <div class="cert-page-wrapper">
 
-    <!-- 1. 국가자격 안내 -->
-    <div class="cert-section-card">
-      <h1>국가자격 안내</h1>
-      <p>
-        국가가 관리하는 자격으로 법적 효력이 있으며, 취업이나 특정 직무 수행을 위해 필수적이거나 가산점이 되는 경우가 많습니다.
+    <!-- 헤더 영역 -->
+    <div class="cert-header">
+      <h1>국가자격</h1>
+      <p style="font-size: 16px; color: var(--muted); margin: 8px 0 0;">
+        국가가 법령에 따라 시행하는 시험 등을 통해 개인의 능력을 공식 인증하는 자격증입니다.
       </p>
-    </div>
-
-    <!-- 2. 국가기술자격 소개 -->
-    <div class="cert-section-card">
-      <h2>국가기술자격</h2>
-      <p>
-        산업과 관련된 기술, 기능 및 서비스 분야의 자격으로, 기술사, 기능장, 기사, 산업기사, 기능사 등 5개 등급으로 구분됩니다.
-      </p>
-    </div>
-
-    <!-- 3. 등급별 분류 -->
-    <div class="cert-section-card">
-      <h3>등급별 분류 및 검정 기준</h3>
-      <ul>
-        <li><strong>기술사:</strong> 최고 수준의 전문성을 갖추며, 구술형 면접이 포함됩니다. (취득 요건: 기사+4년, 산업기사+5년 등)</li>
-        <li><strong>기능장:</strong> 숙련된 기술 인력 평가. (취득 요건: 산업기사+5년, 기능사+7년 등)</li>
-        <li><strong>기사:</strong> 전문 기술 지식 및 실무 능력 평가. (4년제 졸업자, 전문대+경력 등)</li>
-        <li><strong>산업기사:</strong> 기초 이론 및 숙련 기능 기반.</li>
-        <li><strong>기능사:</strong> 응시 자격 제한 없음.</li>
-      </ul>
-    </div>
-
-    <div class="three-row">
-      <!-- 4. 응시 자격 요약 -->
-      <div class="cert-section-card three">
-        <h3>응시 자격 요약</h3>
-        <ul>
-          <li><strong>기술사:</strong> 9년</li>
-          <li><strong>기능장:</strong> 9년</li>
-          <li><strong>기사:</strong> 4년</li>
-          <li><strong>산업기사:</strong> 2년</li>
-          <li><strong>기능사:</strong> 없음</li>
-        </ul>
-      </div>
-
-      <!-- 5. 검정 방식 -->
-      <div class="cert-section-card three">
-        <h3>검정 방식</h3>
-        <ul>
-          <li><strong>검정 단계:</strong> 필기(1차) + 실기(2차)</li>
-          <li><strong>필기 유효기간:</strong> 합격 후 2년 이내 실기 합격 필요</li>
-          <li><strong>출제 방식:</strong> 문제은행 방식</li>
-        </ul>
-      </div>
-
-      <!-- 6. 응시 조건 -->
-      <div class="cert-section-card three">
-        <h3>응시 조건 및 제한</h3>
-        <ul>
-          <li>기능사: 누구나 응시 가능</li>
-          <li>산업기사 이상: 일정 경력 또는 학력 필요</li>
-          <li>서비스계 종목: 일부 제한</li>
-          <li>필기 면제: 교육과정 70% 이상 이수 시 가능</li>
-        </ul>
+      
+      <div class="cert-meta">
+        <div class="cert-meta-item">
+          <div class="cert-meta-label">관련부처</div>
+          <div class="cert-meta-value">국가데이터, 과학기술정보통신부</div>
+        </div>
+        <div class="cert-meta-item">
+          <div class="cert-meta-label">시행기관</div>
+          <div class="cert-meta-value">한국데이터산업진흥원</div>
+        </div>
       </div>
     </div>
 
+    <!-- 탭 네비게이션 -->
+    <div class="cert-tabs">
+      <button class="cert-tab active">기본정보</button>
+      <button class="cert-tab">등급 및 응시자격</button>
+      <button class="cert-tab">시험방식</button>
+      <button class="cert-tab">합격기준</button>
+    </div>
 
-    <div class="exam-row">
-      <!-- 7. 필기시험 방식 -->
-      <div class="cert-section-card half">
-        <h3>필기시험 방식</h3>
+    <!-- 탭 1: 기본정보 -->
+    <div class="tab-content active">
+      <!-- 기본정보 섹션 -->
+      <div class="cert-section-card">
+        <h2>국가자격이란?</h2>
+        <p>
+          국가가 관리하는 자격으로 법적 효력이 있으며, 취업이나 특정 직무 수행을 위해 필수적이거나 가산점이 되는 경우가 많습니다.
+          국가기술자격법에 따라 시행되며, 체계적인 평가를 통해 전문성을 인정받을 수 있습니다.
+        </p>
+      </div>
+
+      <!-- 국가기술자격 소개 -->
+      <div class="cert-section-card">
+        <h2>국가기술자격</h2>
+        <p>
+          산업과 관련된 기술, 기능 및 서비스 분야의 자격으로, 기술사, 기능장, 기사, 산업기사, 기능사 등 5개 등급으로 구분됩니다.
+          각 등급별로 요구되는 전문성과 실무 능력이 다르며, 체계적인 경력 개발 경로를 제공합니다.
+        </p>
+      </div>
+
+      <!-- 등급별 분류 -->
+      <div class="cert-section-card">
+        <h3>등급별 분류 및 검정 기준</h3>
         <ul>
-          <li><strong>객관식 사지선다형:</strong> 기능사 60문항, 산업기사 20문항 등</li>
-          <li><strong>CBT:</strong> 컴퓨터 기반 랜덤 문제 출제</li>
-          <li><strong>PBT:</strong> 종이 기반 시험(일부 종목)</li>
-          <li><strong>논술형/주관식:</strong> 기술사 등</li>
+          <li><strong>기술사</strong> 최고 수준의 전문성을 갖추며, 구술형 면접이 포함됩니다. (취득 요건: 기사+4년, 산업기사+5년 등)</li>
+          <li><strong>기능장</strong> 숙련된 기술 인력 평가. (취득 요건: 산업기사+5년, 기능사+7년 등)</li>
+          <li><strong>기사</strong> 전문 기술 지식 및 실무 능력 평가. (4년제 졸업자, 전문대+경력 등)</li>
+          <li><strong>산업기사</strong> 기초 이론 및 숙련 기능 기반</li>
+          <li><strong>기능사</strong> 응시 자격 제한 없음</li>
         </ul>
       </div>
 
-      <!-- 8. 실기시험 방식 -->
-      <div class="cert-section-card half">
-        <h3>실기시험 방식</h3>
+      <!-- 외부 링크 -->
+      <div class="cert-section-card link-list">
+        <h3>더 알아보기</h3>
         <ul>
-          <li><strong>작업형:</strong> 실제 작업 수행 평가</li>
-          <li><strong>필답형:</strong> 실무 이론 주관식 서술</li>
-          <li><strong>복합형:</strong> 작업형 + 필답형</li>
-          <li><strong>구술형:</strong> 기술사 등 일부 종목</li>
+          <li><a href="https://www.q-net.or.kr/crf005.do?id=crf00502" target="_blank">큐넷 - 국가전문자격 목록</a></li>
+          <li><a href="https://www.pqi.or.kr/inf/qul/infQulNanLis.do" target="_blank">민간자격정보서비스</a></li>
+          <li><a href="https://www.pqi.or.kr/brd/brdList.do?pBbsKindId=8" target="_blank">국가자격정보집</a></li>
         </ul>
       </div>
     </div>
 
-    <!-- 9. 합격 기준 -->
-    <div class="cert-section-card">
-      <h3>합격 기준 및 유의사항</h3>
-      <ul>
-        <li>필기: 60점 이상 절대평가</li>
-        <li>과락: 과목 정답률 40% 미만 시 탈락</li>
-        <li>실기: 대부분 60점 이상</li>
-        <li>자격증 취득 후: 동일 분야 일부 필기 면제(2년)</li>
-      </ul>
+    <!-- 탭 2: 등급 및 응시자격 -->
+    <div class="tab-content">
+      <!-- 3열 그리드 -->
+      <div class="three-row">
+        <!-- 응시 자격 요약 -->
+        <div class="cert-section-card">
+          <h3>등급별 응시자격</h3>
+          <ul>
+            <li><strong>기술사</strong> 9년 경력</li>
+            <li><strong>기능장</strong> 9년 경력</li>
+            <li><strong>기사</strong> 4년 경력/학력</li>
+            <li><strong>산업기사</strong> 2년 경력/학력</li>
+            <li><strong>기능사</strong> 제한 없음</li>
+          </ul>
+        </div>
+
+        <!-- 검정 방식 -->
+        <div class="cert-section-card">
+          <h3>검정 방식</h3>
+          <ul>
+            <li><strong>검정 단계</strong> 필기(1차) + 실기(2차)</li>
+            <li><strong>유효기간</strong> 합격 후 2년</li>
+            <li><strong>출제 방식</strong> 문제은행 방식</li>
+            <li><strong>평가 기준</strong> 절대평가 원칙</li>
+          </ul>
+        </div>
+
+        <!-- 응시 조건 -->
+        <div class="cert-section-card">
+          <h3>응시 조건</h3>
+          <ul>
+            <li>기능사: 누구나 응시 가능</li>
+            <li>산업기사: 경력/학력 필요</li>
+            <li>서비스계: 일부 제한 있음</li>
+            <li>필기 면제: 교육 70% 이수 시</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
-    <!-- 10. 외부 링크 -->
-    <div class="cert-section-card link-list">
-      <h3>자격 목록 더 자세히 보기</h3>
-      <ul>
-        <li><a href="https://www.q-net.or.kr/crf005.do?id=crf00502" target="_blank">큐넷 - 국가전문자격 목록</a></li>
-        <li><a href="https://www.pqi.or.kr/inf/qul/infQulNanLis.do" target="_blank">민간자격정보서비스</a></li>
-        <li><a href="https://www.pqi.or.kr/brd/brdList.do?pBbsKindId=8" target="_blank">국가자격정보집</a></li>
-      </ul>
+    <!-- 탭 3: 시험방식 -->
+    <div class="tab-content">
+      <!-- 시험 방식 2열 -->
+      <div class="exam-row">
+        <!-- 필기시험 -->
+        <div class="cert-section-card">
+          <h3>필기시험 방식</h3>
+          <ul>
+            <li><strong>객관식</strong> 사지선다형 (기능사 60문항, 산업기사 20문항 등)</li>
+            <li><strong>CBT</strong> 컴퓨터 기반 랜덤 문제 출제</li>
+            <li><strong>PBT</strong> 종이 기반 시험 (일부 종목)</li>
+            <li><strong>논술형</strong> 기술사 등 특정 종목</li>
+          </ul>
+        </div>
+
+        <!-- 실기시험 -->
+        <div class="cert-section-card">
+          <h3>실기시험 방식</h3>
+          <ul>
+            <li><strong>작업형</strong> 실제 작업 수행 평가</li>
+            <li><strong>필답형</strong> 실무 이론 주관식 서술</li>
+            <li><strong>복합형</strong> 작업형 + 필답형 혼합</li>
+            <li><strong>구술형</strong> 기술사 등 일부 종목</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
-  </div> <!-- end wrapper -->
+    <!-- 탭 4: 합격기준 -->
+    <div class="tab-content">
+      <!-- 합격 기준 -->
+      <div class="cert-section-card">
+        <h3>합격 기준 및 유의사항</h3>
+        <ul>
+          <li><strong>필기 기준</strong> 60점 이상 절대평가</li>
+          <li><strong>과락 제도</strong> 과목별 40% 미만 시 불합격</li>
+          <li><strong>실기 기준</strong> 대부분 60점 이상</li>
+          <li><strong>필기 면제</strong> 자격증 취득 후 동일 분야 2년간 필기 면제</li>
+          <li><strong>재응시</strong> 불합격 시 제한 없이 재응시 가능</li>
+          <li><strong>유효기간</strong> 필기 합격 후 2년 내 실기 합격 필요</li>
+        </ul>
+      </div>
+    </div>
 
+  </div>
+
+  <script src="../js/cert-theme.js"></script>
+  <script src="../js/cert-tabs.js"></script>
 </body>
 
 </html>

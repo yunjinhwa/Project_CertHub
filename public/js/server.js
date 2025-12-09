@@ -43,7 +43,6 @@ app.get('/api/cert/detail', async (req, res) => {
   if (!jmCd) return res.status(400).send("jmcd parameter is required.");
 
   const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList';
-
   const query =
     `?serviceKey=${serviceKey}` +
     `&jmCd=${encodeURIComponent(jmCd)}`;
@@ -103,27 +102,6 @@ app.get('/api/schedule', async (req, res) => {
     try {
         const response = await fetch(baseUrl + query);
         const xmlText = await response.text();
-        res.set("Content-Type", "application/xml; charset=utf-8");
-        res.send(xmlText);
-    } catch (error) {
-        res.status(500).send("서버 오류: " + error.message);
-    }
-});
-
-// =========================================
-// 상세조회 API
-// =========================================
-app.get('/api/cert/detail', async (req, res) => {
-    const jmCd = req.query.jmcd;
-    if (!jmCd) return res.status(400).send("jmcd parameter is required.");
-
-    const baseUrl = 'http://openapi.q-net.or.kr/api/service/rest/InquiryInformationTradeNTQSVC/getList';
-    const query = `?serviceKey=${serviceKey}&jmCd=${encodeURIComponent(jmCd)}`;
-
-    try {
-        const response = await fetch(baseUrl + query);
-        const xmlText = await response.text();
-
         res.set("Content-Type", "application/xml; charset=utf-8");
         res.send(xmlText);
     } catch (error) {

@@ -92,7 +92,7 @@
             <div id="three-sections-wrapper" class="data-section">
                 <!----------------- (4) 📈 지금 뜨는 자격증 ----------------->
                 <div id="trending-certs-section" class="data-section">
-                    <h2 class="h2">📈 지격 정보 현황</h2>
+                    <h2 class="h2">📈 자격 정보 현황</h2>
                     <div id="scrollContainer-trending" class="search-bottom">
                         <div id="certlist-trending">
                             <!-- 🔹 DATA.certsTrending 데이터 삽입 -->
@@ -121,13 +121,19 @@
     </footer>
 
     <!-- ======================= Modal ======================= -->
-    <div id="detailModal" class="modal-overlay">
+    <div id="detailModal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="modalCloseBtn">✕</button>
-            <div id="modalBody">불러오는 중...</div>
+            <h3 id="modalTitle">자격 상세 정보</h3>
+            <div id="modalBody">
+                불러오는 중...
+            </div>
         </div>
     </div>
 
+
+    <script src="js/modal.js"></script>
+    <script type="module" src="js/firebase/firebase-search-click.js"></script>
 </body>
 
 </html>

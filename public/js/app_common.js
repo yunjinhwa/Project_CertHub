@@ -50,45 +50,6 @@ window.createEl = function(tag, attrs = {}, children = []) {
   return el;
 };
 
-// Modal
-window.showModal = function(title, content) {
-  const closeModal = () => {
-    const backdrop = document.querySelector(".modal-backdrop");
-    const modal = document.querySelector(".modal");
-    if (backdrop) document.body.removeChild(backdrop);
-    if (modal) document.body.removeChild(modal);
-    // 스크롤 복구
-    document.body.classList.remove("modal-open");
-    document.body.style.removeProperty("--scrollbar-width");
-  };
-
-  // 스크롤바 너비 계산 및 배경 스크롤 막기
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.body.style.setProperty("--scrollbar-width", scrollbarWidth + "px");
-  document.body.classList.add("modal-open");
-
-  const backdrop = createEl("div", { class: "modal-backdrop" });
-  backdrop.addEventListener("click", closeModal);
-
-  const confirmBtn = createEl("button", {
-    class: "btn",
-    onClick: closeModal
-  }, ["확인"]);
-
-  const modal = createEl("div", { class: "modal" }, [
-    createEl("div", { class: "modal-header" }, [
-      createEl("h3", { class: "h3" }, [title])
-    ]),
-    createEl("div", { class: "modal-body" }, [
-      typeof content === "string" ? createEl("p", {}, [content]) : content
-    ]),
-    createEl("div", { class: "modal-footer" }, [confirmBtn])
-  ]);
-
-  document.body.appendChild(backdrop);
-  document.body.appendChild(modal);
-};
-
 // shared components
 window.renderSearchBar = function (containerId, placeholder = "자격증을 검색해보세요 (예: 정보처리기사)") {
   const resultsId = containerId + "-results";

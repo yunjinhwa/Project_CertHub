@@ -23,8 +23,8 @@ body {
     --overlay: #1a1f2d;
     --fg: #f5f7fb;
     --muted: #a0a8b8;
-    --primary: #5b8cff;
-    --primary-600: #386cff;
+    --primary: #3757ff;
+    --primary-600: #2747f2;
     --border: #252a36;
     --ring: #7aa2ff;
     --shadow: 0 10px 30px rgba(0, 0, 0, .35);
@@ -310,21 +310,91 @@ h1 {
 ====================================== */
 /*자격증 상세정보 카드를 가로 배치*/
 .cert-type {
-    display: flex;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 .cert-type .card {
-    flex: 1;
+    position: relative;
+    overflow: hidden;
+    padding: 28px !important;
+    border: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.cert-type .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--ring));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 #cert-detail-section .card {
-  transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: none;
 }
 
 #cert-detail-section .card:hover {
-  transform: translateY(-5px) scale(1.03); /* 위로 이동하며 약간 커지는 효과 */
-  background-color: var(--overlay); /* 배경색 변경 */
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-color: var(--border);
+}
+
+.cert-type .h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cert-type .body-2 {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 12px 0 20px 0;
+    flex: 1;
+}
+
+.cert-type .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.cert-type .link:hover {
+    background: var(--primary-600);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(55, 87, 255, 0.3);
+}
+
+.cert-type .link::after {
+    content: '→';
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.cert-type .link:hover::after {
+    transform: translateX(2px);
 }
 
 /* ============ Cards & Surfaces ============ */
@@ -354,52 +424,377 @@ a:hover {
 }
 
 /*모달 부분*/
+.hidden {
+  display: none !important;
+}
+
 .modal-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  display: flex;          /* 🔹 항상 flex로 두고 */
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
 
 .modal-content {
-  background: var(--panel); /* var(--panel) 변수 사용으로 테마 전환 대응 */
-  color: var(--fg); /* 텍스트 색상도 변수로 지정 */
-  padding: 20px;
-  width: 480px;
-  max-height: 80%;
+  background: var(--panel);
+  color: var(--fg);
+  padding: 0;
+  width: 750px;
+  max-width: 90%;
+  max-height: 85vh;
   overflow-y: auto;
-  border-radius: var(--radius); /* border-radius 변수 사용 */
-  border: 1px solid var(--border); /* 테두리 추가 */
-  box-shadow: var(--shadow); /* 그림자 변수 사용 */
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
+/* 닫기 버튼 위치 */
 #modalCloseBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: sticky;
+  top: 16px;
+  float: right;
+  margin: 16px 16px 0 0;
   border: none;
-  background: none;
-  font-size: 22px;
-  color: var(--muted); /* 아이콘 색상 변수 사용 */
+  background: var(--card);
+  font-size: 20px;
+  color: var(--muted);
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  z-index: 1001;
+}
+
+#modalCloseBtn:hover {
+  background: var(--overlay);
+  color: var(--fg);
+}
+
+#modalBody {
+  padding: 0 32px 32px;
+  clear: both;
+}
+
+/* 모달 헤더 커스텀 */
+.modal-header-custom {
+  background: linear-gradient(135deg, var(--card), var(--panel));
+  border-bottom: 1px solid var(--border);
+  padding: 32px 32px 24px;
+  margin: 0 0 24px;
+  position: relative;
+}
+
+.modal-header-custom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--ring));
+}
+
+.modal-cert-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 12px;
+  color: var(--fg);
+  letter-spacing: -0.5px;
+  padding-right: 40px;
+}
+
+.modal-cert-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cert-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* 모달 탭 */
+.modal-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 32px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-tab:hover {
+  color: var(--fg);
+}
+
+.modal-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* 모달 탭 콘텐츠 */
+.modal-tab-content {
+  display: none;
+  padding: 0 32px 32px;
+}
+
+.modal-tab-content.active {
+  display: block;
+}
+
+/* 모달 섹션 */
+.modal-section {
+  margin-bottom: 28px;
+}
+
+.modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.modal-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.modal-section-content {
+  color: var(--fg);
+  line-height: 1.8;
+}
+
+.modal-section-content p {
+  margin: 0 0 12px;
+  color: var(--fg);
+}
+
+.modal-section-content ul {
+  margin: 0;
+  padding-left: 24px;
+}
+
+.modal-section-content li {
+  margin-bottom: 8px;
+  color: var(--fg);
+  line-height: 1.7;
+}
+
+.modal-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-related-list li {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modal-related-list li:hover {
+  background: var(--overlay);
+  border-color: var(--primary);
+  transform: translateX(4px);
 }
 
 /* ======================================
    4. 자격증 시험 일정
 ====================================== */
 #scrollContainer-calendar,
-#scrollContainer-trending,
 #scrollContainer {
-    max-height: 360px;  /* 원하는 크기로 조절 */
+    max-height: 360px;
     overflow-y: auto;
     padding-right: 10px;
+}
+
+/* ======================================
+   5. 자격 정보 현황 캐러셀
+====================================== */
+#scrollContainer-trending {
+    position: relative;
+    overflow: visible;
+    max-height: 340px;
+    width: 100%;
+}
+
+#certlist-trending {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.trending-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.trending-carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+}
+
+.trending-carousel-slide {
+    min-width: 100%;
+    max-width: 100%;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.trending-carousel-slide.active {
+    opacity: 1;
+}
+
+.trending-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: none;
+    background: var(--border);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot:hover {
+    background: var(--muted);
+}
+
+.carousel-dot.active {
+    background: var(--primary);
+    width: 20px;
+    border-radius: 3px;
+}
+
+/* 자격 정보 카드 디자인 */
+.exam-stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    max-width: 100%;
+    min-height: 340px;
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0;
+}
+
+.stat-card-grade {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--overlay);
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+.stat-card-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 20px;
+    flex: 1;
+}
+
+.stat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-row.highlight {
+    grid-column: 1 / -1;
+    background: var(--overlay);
+    padding: 14px;
+    border-radius: 8px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: bold;
+}
+
+.stat-value {
+    font-size: 16px;
+    color: var(--fg);
+    font-weight: 600;
+}
+
+.stat-value-primary {
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.stat-divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
 }
 
 
@@ -411,6 +806,8 @@ a:hover {
     display: grid;
     grid-template-columns: repeat(2, 1fr);  /* 한 줄에 2개씩 배치 */
     gap: 16px;  /* 카드 간의 간격 */
+    max-height: 340px;
+    overflow-y: auto;
 }
 
 /* 개별 카드 스타일 */
@@ -447,23 +844,22 @@ a:hover {
 /* 전체 컨테이너: Flexbox로 배치 */
 #three-sections-wrapper {
     display: flex;
-    justify-content: space-between;  /* 왼쪽과 오른쪽 섹션 사이 공간을 넓힘 */
-    gap: 24px;  /* 각 섹션 간 간격 */
+    gap: 24px;
+    align-items: flex-start;
 }
 
-/* 왼쪽 영역: 자격증 + 커뮤니티 글 */
-#left-sections {
-    display: block;
-    flex-direction: column;  /* 위아래로 배치 */
-    gap: 24px;  /* 각 섹션 간 간격 */
-    flex: 2;  /* 왼쪽 섹션이 오른쪽보다 더 많이 차지하도록 설정 */
+/* 자격 정보 현황: 2/3 너비 */
+#trending-certs-section {
+    flex: 0 0 calc(66.666% - 12px);
+    max-width: calc(66.666% - 12px);
+    min-width: 0;
 }
 
-/* 오른쪽 영역: 활용 분야 */
+/* 활용 분야: 1/3 너비 */
 #fields-section {
-    display: block;
-    flex: 1;  /* 오른쪽 섹션은 남은 공간을 차지 */
-    min-width: 300px;  /* 최소 너비 설정 */
+    flex: 0 0 calc(33.333% - 12px);
+    max-width: calc(33.333% - 12px);
+    min-width: 0;
 }
 
 /* 각 섹션 제목 스타일 */
