@@ -376,7 +376,7 @@ window.renderPaths = function(containerId) {
 // theme toggle
 window.setupThemeToggle = function() {
   const btn = document.getElementById("toggleTheme");
-  const storageKey = "theme-preference";
+  const storageKey = "theme";
   
   const updateButton = () => {
     const isLight = document.body.classList.contains("light");

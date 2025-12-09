@@ -162,6 +162,24 @@ document.getElementById("detailModal").addEventListener("click", (e) => {
 // ===========================================
 // 🔹 시험 일정 불러오기 함수
 // ===========================================
+// 오직 로그 출력을 위한 함수
+function logScheduleSummary(xmlDoc) {
+    const items = xmlDoc.getElementsByTagName("item");
+
+    console.log(`🗂 일정 개수: ${items.length}`);
+
+    Array.from(items).forEach((item, i) => {
+        const desc = item.getElementsByTagName("description")[0]?.textContent || "-";
+        const docExam = item.getElementsByTagName("docexamdt")[0]?.textContent || "-";
+        const regStart = item.getElementsByTagName("docregstartdt")[0]?.textContent || "-";
+        const regEnd = item.getElementsByTagName("docregenddt")[0]?.textContent || "-";
+
+        console.log(
+            `${i + 1}) ${desc} / 필기시험: ${docExam} / 접수: ${regStart}~${regEnd}`
+        );
+    });
+}
+
 export async function loadScheduleToCalendar(jmcd, certName = "", grade = "") {
     const scheduleContainer = document.getElementById("results_calendar");
 
@@ -171,9 +189,13 @@ export async function loadScheduleToCalendar(jmcd, certName = "", grade = "") {
     }
 
     const xmlDoc = await fetchSchedule(jmcd, grade, "2025");
-
+    
+    logScheduleSummary(xmlDoc); // 요약된 XML 로그 출력 함수를 호출
+    /*
+    // 전체 XML 내용을 확인하는 로그 출력문
     console.log("📡 받아온 XML Document:", xmlDoc);
     console.log("📡 XML raw text:", new XMLSerializer().serializeToString(xmlDoc));
+    */
 
     // 파싱 
     let schedules = getItemsFromXML(xmlDoc);
