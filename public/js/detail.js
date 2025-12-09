@@ -201,19 +201,48 @@ async function fetchTextWithRetry(
 // 같은 jmcd를 여러 번 눌렀을 때 재요청 안 하도록 캐시
 const detailCache = new Map();
 
-// 모달 기반 상세 정보 로더 (공통 showModal 사용)
-export async function loadDetailInfo(jmcd, certName = "") {
-    // 1) 캐시가 있으면 바로 모달로 표시
+
+// 모달 닫기 함수
+export function closeModal() {
+    document.getElementById("detailModal").style.display = "none";
+    document.body.style.overflow = "";
+}
+
+// 탭 전환 이벤트 리스너 함수 (재사용 가능)
+function attachTabListeners(modalBody) {
+    const tabs = modalBody.querySelectorAll(".modal-tab");
+    const contents = modalBody.querySelectorAll(".modal-tab-content");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const targetTab = tab.getAttribute("data-tab");
+
+            // 모든 탭과 콘텐츠 비활성화
+            tabs.forEach(t => t.classList.remove("active"));
+            contents.forEach(c => c.classList.remove("active"));
+
+            // 클릭한 탭과 해당 콘텐츠 활성화
+            tab.classList.add("active");
+            modalBody.querySelector(`[data-content="${targetTab}"]`).classList.add("active");
+        });
+    });
+}
+
+export async function loadDetailInfo(jmcd, certInfo = null) {
+    const modal = document.getElementById("detailModal");
+    const modalBody = document.getElementById("modalBody");
+
+    if (!modal || !modalBody) return;
+
+    // 모달 띄우기 + body 스크롤 방지
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+
+    // 1) 캐시에 이미 있으면 바로 출력 (API 호출 X) + 이벤트 리스너 재등록
     const cachedHtml = detailCache.get(jmcd);
     if (cachedHtml) {
-        const contentEl = buildDetailContent(cachedHtml, jmcd, certName);
-
-        if (typeof window.showModal === "function") {
-            const title = certName ? `${certName} 상세 정보` : "자격 상세 정보";
-            window.showModal(title, contentEl);
-        } else {
-            alert("자격 상세 정보\n\n" + contentEl.textContent);
-        }
+        modalBody.innerHTML = cachedHtml;
+        attachTabListeners(modalBody);
         return;
     }
 
@@ -244,9 +273,30 @@ export async function loadDetailInfo(jmcd, certName = "") {
             }),
         ]);
 
-        // =========================
-        // 1) 상세 XML에서 취득방법 추출
-        // =========================
+        // 🔍 디버깅: XML 응답 구조 확인
+        console.log("=== 관련 자격증 API 응답 (처음 500자) ===");
+        console.log(relatedXmlText.substring(0, 500));
+
+        // ---------------------------------------------
+        // 자격증 이름, 등급, 태그 정보 (전달받은 certInfo 사용)
+        // ---------------------------------------------
+        let certName = "자격 상세 정보";
+        let certGrade = "";
+        let certSeries = "";
+        let certField1 = "";
+        let certField2 = "";
+        
+        if (certInfo) {
+            certName = certInfo.name || "자격 상세 정보";
+            certGrade = certInfo.grade || "";
+            certSeries = certInfo.series || "";
+            certField1 = certInfo.field1 || "";
+            certField2 = certInfo.field2 || "";
+        }
+
+        // ---------------------------------------------
+        // 상세조회 XML 파싱 → 취득방법 추출
+        // ---------------------------------------------
         const detailXml = new DOMParser().parseFromString(detailXmlText, "text/xml");
         const detailItems = Array.from(detailXml.getElementsByTagName("item"));
 
@@ -323,20 +373,46 @@ export async function loadDetailInfo(jmcd, certName = "") {
             relatedCertsHTML = "<li>관련 자격증 정보가 없습니다.</li>";
         }
 
-        // ==============================
-        // 3) 최종 HTML 템플릿 구성
-        // ==============================
-        const html = `
-            <h3>📘 취득방법</h3>
-            ${acquireInfo || "<p>취득방법 정보가 없습니다.</p>"}
+        // ---------------------------------------------
+        // 최종 HTML 구성
+        // ---------------------------------------------
+        const tagsHtml = [certGrade, certSeries, certField1, certField2]
+            .filter(tag => tag)
+            .map(tag => `<span class="cert-tag">#${tag}</span>`)
+            .join("");
 
-            <h3>📘 관련 자격증</h3>
-            <ul>
-                ${relatedCertsHTML}
-            </ul>
+        const html = `
+            <div class="modal-header-custom">
+                <h1 class="modal-cert-title">${certName}</h1>
+                <div class="modal-cert-tags">
+                    ${tagsHtml}
+                </div>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="acquire">취득방법</button>
+                <button class="modal-tab" data-tab="related">관련 자격증</button>
+            </div>
+
+            <div class="modal-tab-content active" data-content="acquire">
+                <div class="modal-section-content">
+                    ${acquireInfo || "<p>취득방법 정보가 없습니다.</p>"}
+                </div>
+            </div>
+
+            <div class="modal-tab-content" data-content="related">
+                <ul class="modal-related-list">
+                    ${relatedCertsHTML}
+                </ul>
+            </div>
         `;
 
-        // 캐시에 저장 (본문 HTML만)
+        modalBody.innerHTML = html;
+
+        // 탭 전환 이벤트 리스너 추가 (innerHTML 설정 후에 실행)
+        attachTabListeners(modalBody);
+
+        // ✅ 같은 자격증을 다시 눌렀을 때는 바로 이걸 사용
         detailCache.set(jmcd, html);
 
         // 모달 콘텐츠 + 북마크 버튼 DOM 생성
