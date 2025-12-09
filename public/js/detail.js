@@ -234,15 +234,45 @@ export async function loadDetailInfo(jmcd, certInfo = null) {
 
     if (!modal || !modalBody) return;
 
-    // 모달 띄우기 + body 스크롤 방지
-    modal.style.display = "flex";
-    document.body.style.overflow = "hidden";
+    // 자격증 기본 정보 (이름/등급/분류 태그) 미리 설정
+    let certName = "자격 상세 정보";
+    let certGrade = "";
+    let certSeries = "";
+    let certField1 = "";
+    let certField2 = "";
 
-    // 1) 캐시에 이미 있으면 바로 출력 (API 호출 X) + 이벤트 리스너 재등록
+    if (certInfo) {
+        if (typeof certInfo === "string") {
+            // ✅ 문자열로 들어온 경우: 그대로 이름으로 사용
+            certName = certInfo;
+        } else {
+            // ✅ 객체로 들어온 경우: 기존 로직 유지
+            certName = certInfo.name || "자격 상세 정보";
+            certGrade = certInfo.grade || "";
+            certSeries = certInfo.series || "";
+            certField1 = certInfo.field1 || "";
+            certField2 = certInfo.field2 || "";
+        }
+    }
+
+    // 1) 캐시에 이미 있으면: API 호출 없이 바로 모달 띄우기
     const cachedHtml = detailCache.get(jmcd);
     if (cachedHtml) {
-        modalBody.innerHTML = cachedHtml;
-        attachTabListeners(modalBody);
+        // 캐시된 HTML로 DOM 생성 + 북마크 버튼 포함
+        const contentEl = buildDetailContent(cachedHtml, jmcd, certName);
+
+        // 탭 이벤트도 이 DOM 기준으로 다시 붙이기
+        attachTabListeners(contentEl);
+
+        if (typeof window.showModal === "function") {
+            const title = certName ? `${certName} 상세 정보` : "자격 상세 정보";
+            window.showModal(title, contentEl);
+        } else {
+            // 혹시 showModal이 없을 때를 대비한 fallback
+            modalBody.innerHTML = "";
+            modalBody.appendChild(contentEl);
+        }
+
         return;
     }
 
@@ -276,23 +306,6 @@ export async function loadDetailInfo(jmcd, certInfo = null) {
         // 🔍 디버깅: XML 응답 구조 확인
         console.log("=== 관련 자격증 API 응답 (처음 500자) ===");
         console.log(relatedXmlText.substring(0, 500));
-
-        // ---------------------------------------------
-        // 자격증 이름, 등급, 태그 정보 (전달받은 certInfo 사용)
-        // ---------------------------------------------
-        let certName = "자격 상세 정보";
-        let certGrade = "";
-        let certSeries = "";
-        let certField1 = "";
-        let certField2 = "";
-        
-        if (certInfo) {
-            certName = certInfo.name || "자격 상세 정보";
-            certGrade = certInfo.grade || "";
-            certSeries = certInfo.series || "";
-            certField1 = certInfo.field1 || "";
-            certField2 = certInfo.field2 || "";
-        }
 
         // ---------------------------------------------
         // 상세조회 XML 파싱 → 취득방법 추출
@@ -407,22 +420,21 @@ export async function loadDetailInfo(jmcd, certInfo = null) {
             </div>
         `;
 
-        modalBody.innerHTML = html;
-
-        // 탭 전환 이벤트 리스너 추가 (innerHTML 설정 후에 실행)
-        attachTabListeners(modalBody);
-
-        // ✅ 같은 자격증을 다시 눌렀을 때는 바로 이걸 사용
+        // ✅ 다음에 같은 자격증 눌렀을 때 쓸 수 있도록 캐시 저장
         detailCache.set(jmcd, html);
 
         // 모달 콘텐츠 + 북마크 버튼 DOM 생성
         const contentEl = buildDetailContent(html, jmcd, certName);
 
+        // 탭 이벤트 리스너는 이 DOM(contentEl) 기준으로 한 번만 붙이면 됨
+        attachTabListeners(contentEl);
+
         if (typeof window.showModal === "function") {
             const title = certName ? `${certName} 상세 정보` : "자격 상세 정보";
             window.showModal(title, contentEl);
         } else {
-            alert("자격 상세 정보\n\n" + contentEl.textContent);
+            modalBody.innerHTML = "";
+            modalBody.appendChild(contentEl);
         }
     } catch (error) {
         console.error("데이터 로드 중 오류 발생:", error);

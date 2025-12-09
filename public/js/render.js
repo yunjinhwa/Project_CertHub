@@ -52,22 +52,21 @@ export function renderListItem(item, container) {
     container.appendChild(div);
     
     // "자세히" 버튼 클릭 시 자격증 정보를 함께 전달
-    div.querySelector(".detail-btn").addEventListener("click", () => {
-        loadDetailInfo(jmcd, {
-            name: jmfldnm,
-            grade: qualgbnm,
-            series: seriesnm,
-            field1: obligfldnm,
-            field2: mdobligfldnm
-        });
-    });
+    // div.querySelector(".detail-btn").addEventListener("click", () => {
+    //     loadDetailInfo(jmcd, {
+    //         name: jmfldnm,
+    //         grade: qualgbnm,
+    //         series: seriesnm,
+    //         field1: obligfldnm,
+    //         field2: mdobligfldnm
+    //     });
+    // });
     
-    div.querySelector(".schedule-btn").addEventListener("click", () => {
-        loadScheduleByName(jmfldnm); 
-    });
+    // div.querySelector(".schedule-btn").addEventListener("click", () => {
+    //     loadScheduleByName(jmfldnm); 
+    // });
 
-    div.querySelector(".detail-btn")
-        .addEventListener("click", () => {
+    div.querySelector(".detail-btn").addEventListener("click", () => {
             addSearchClick({
                 certId: jmcd||null,
                 keyword: jmfldnm,
@@ -75,11 +74,16 @@ export function renderListItem(item, container) {
             }).catch((err) => {
                 console.error("search_click 기록 실패: " + err);
             });
-            loadDetailInfo(jmcd, jmfldnm)
+            loadDetailInfo(jmcd, {
+                name: jmfldnm,
+                grade: qualgbnm,
+                series: seriesnm,
+                field1: obligfldnm,
+                field2: mdobligfldnm,
+            });
         });
 
-    div.querySelector(".schedule-btn")
-        .addEventListener("click", (e) => {
+    div.querySelector(".schedule-btn").addEventListener("click", (e) => {
             const btn = e.target;
             window.loadScheduleToCalendar(
                 btn.dataset.jmcd,
