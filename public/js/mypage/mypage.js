@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupThemeToggle();
   renderTodo("todo-week");
-  renderCertDday(); // 관심 자격증 D-day
+  //renderCertDday(); // 관심 자격증 D-day
   renderWeekProgress(); // 이번 주 할 일 진행률
   
   // 더미 데이터 기반 추천 시스템 사용
